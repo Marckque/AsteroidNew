@@ -28,9 +28,12 @@ public class FlowFieldsTarget
 
 public enum FlowFieldPreset
 {
-    none = 0,
-    circle = 1,
-    wave = 2
+    none,
+    random,
+    gravity,
+    test,
+    wave,
+    wave2
 };
 
 public class FlowFieldManager : MonoBehaviour
@@ -46,9 +49,9 @@ public class FlowFieldManager : MonoBehaviour
 
     protected void Awake()
     {
+        InitialiseFlowFields();
         IsTargetActivated();
         CheckPreset();
-        InitialiseFlowFields();
     }
 
     private void IsTargetActivated()
@@ -68,15 +71,73 @@ public class FlowFieldManager : MonoBehaviour
     {
         switch(m_CurrentPreset)
         {
-            case FlowFieldPreset.circle:
-
+            // It makes the flow fields' direction random
+            case FlowFieldPreset.random:
+                for (int i = 0; i < m_FlowFieldsParameters.flowFields.Length - 1; i++)
+                {
+                    m_FlowFieldsParameters.flowFields[i].Direction = ExtensionMethods.RandomVector3();
+                }
                 break;
 
-            case FlowFieldPreset.wave:
+            // Makes the flow fields go down
+            case FlowFieldPreset.gravity:
+                for (int i = 0; i < m_FlowFieldsParameters.flowFields.Length - 1; i++)
+                {
+                    m_FlowFieldsParameters.flowFields[i].Direction = -Vector3.forward;
+                }
+                break;
 
-                test = new Vector3[10, 10];
-
+            case FlowFieldPreset.test:
+                for (int i = 0; i < 99; i++)
+                {
+                    for (int j = 0; j < 10; j++)
+                    {
+                        if (i % 2 == 0)
+                        {
+                            if (j % 2 == 0)
+                            {
+                                m_FlowFieldsParameters.flowFields[i].Direction = Vector3.forward;
+                            }
+                            else
+                            {
+                                m_FlowFieldsParameters.flowFields[i].Direction = -Vector3.forward;
+                            }
+                        }
+                    }
+                }
                     
+                break;
+
+                /*
+            case FlowFieldPreset.test:
+                float a = 0;
+                Vector2 v = Vector2.zero;
+
+                float xOff = 0f;
+                for (int i = 0; i < 10; i++)
+                {
+                    float yOff = 0f;
+                    for (int j = 0; j < 10; j++)
+                    {
+                        if (i == 10 && j == 10)
+                        {
+                            return;
+                        }
+
+                        a = (xOff + yOff) * Mathf.PI * 2f;
+                        v = new Vector2(Mathf.Cos(a), Mathf.Sin(a));
+
+                        m_FlowFieldsParameters.flowFields[i].Direction = new Vector3(v.x, 0f, v.y);
+                        yOff += 0.01f;
+
+                    }
+                    xOff += 0.01f;
+                }
+                break;
+                */
+            /*
+            case FlowFieldPreset.wave:
+                test = new Vector3[10, 10];    
                 for (int k = 0; k < m_FlowFieldsParameters.flowFields.Length; k++)
                 {
                     float xOffset = 0f;
@@ -87,15 +148,26 @@ public class FlowFieldManager : MonoBehaviour
                         {
                             float theta = ExtensionMethods.Remap(Mathf.PerlinNoise(xOffset, yOffset), 0f, 1f, 0f, Mathf.PI * 2f);
                             test[i, j] = new Vector3(Mathf.Cos(theta), 0f, Mathf.Sin(theta));
-                            m_FlowFieldsParameters.flowFields[k].Direction = test[i, j].normalized;
+                            m_FlowFieldsParameters.flowFields[k].Direction = test[i, j];
                             yOffset += 1f;
                         }
                         xOffset += 1f;
                     }
                 }
-
                 break;
 
+            case FlowFieldPreset.wave2:
+                float noise;
+                for (int i = 0; i < 99; i++)
+                {
+                    noise = Mathf.PerlinNoise(Random.Range(-20, 20), Random.Range(-20, 20));
+                    m_FlowFieldsParameters.flowFields[i].Direction = new Vector3(Mathf.Sin(noise), 0f, Mathf.Cos(noise)).normalized;
+                }
+
+                break;
+            */
+
+            // It makes flow fields' direction to be Vector.zero;
             case FlowFieldPreset.none:
             default:
                 break;

@@ -84,6 +84,6 @@ public class FlowField : MonoBehaviour
     {
         Gizmos.color = Color.blue;
         Gizmos.DrawRay(transform.position + Vector3.up, Direction);
-        Gizmos.DrawSphere(transform.position + Vector3.up + Direction, 0.1f);
+        Gizmos.DrawSphere(transform.position + Vector3.up + Direction, 0.2f);
     }
 }
