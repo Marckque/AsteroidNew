@@ -26,13 +26,12 @@ public class FlowFieldsTarget
     public bool updateDirectionInRealTime;
 }
 
-[System.Serializable]
-public class FlowFieldsCalculation
+public enum FlowFieldPreset
 {
-    [Header("Flow calculation")]
-    public bool setFlowAccordingToMethodX;
-    public bool setFlowAccordingToMethodY;
-}
+    none = 0,
+    circle = 1,
+    wave = 2
+};
 
 public class FlowFieldManager : MonoBehaviour
 {
@@ -40,10 +39,15 @@ public class FlowFieldManager : MonoBehaviour
     private FlowFieldsParameters m_FlowFieldsParameters = new FlowFieldsParameters();
     [SerializeField]
     private FlowFieldsTarget m_FlowFieldsTarget = new FlowFieldsTarget();
+    [SerializeField]
+    private FlowFieldPreset m_CurrentPreset;
+
+    private Vector3[,] test;
 
     protected void Awake()
     {
         IsTargetActivated();
+        CheckPreset();
         InitialiseFlowFields();
     }
 
@@ -56,6 +60,46 @@ public class FlowFieldManager : MonoBehaviour
         }
         else
         {
+            m_CurrentPreset = FlowFieldPreset.none;
+        }
+    }
+
+    private void CheckPreset()
+    {
+        switch(m_CurrentPreset)
+        {
+            case FlowFieldPreset.circle:
+
+                break;
+
+            case FlowFieldPreset.wave:
+
+                test = new Vector3[10, 10];
+
+                    
+                for (int k = 0; k < m_FlowFieldsParameters.flowFields.Length; k++)
+                {
+                    float xOffset = 0f;
+                    for (int i = 0; i < 10; i++)
+                    {
+                        float yOffset = 0f;
+                        for (int j = 0; j < 10; j++)
+                        {
+                            float theta = ExtensionMethods.Remap(Mathf.PerlinNoise(xOffset, yOffset), 0f, 1f, 0f, Mathf.PI * 2f);
+                            test[i, j] = new Vector3(Mathf.Cos(theta), 0f, Mathf.Sin(theta));
+                            m_FlowFieldsParameters.flowFields[k].Direction = test[i, j].normalized;
+                            yOffset += 1f;
+                        }
+                        xOffset += 1f;
+                    }
+                }
+
+                break;
+
+            case FlowFieldPreset.none:
+            default:
+                break;
+
         }
     }
 

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 public enum AsteroidType
 {
@@ -14,6 +15,8 @@ public class Asteroid : Entity
     [SerializeField]
     private int m_Points = 100;
 
+    private List<Asteroid> m_OtherAsteroidsInRange = new List<Asteroid>();
+
     public AsteroidType AsteroidType { get; set; }
 
     protected override void Awake()
@@ -21,10 +24,22 @@ public class Asteroid : Entity
         base.Awake();
     }
 
+    protected override void FixedUpdate()
+    {
+        base.FixedUpdate();
+
+        /*
+        foreach(Asteroid asteroid in m_OtherAsteroidsInRange)
+        {
+            SetAcceleration((transform.position - asteroid.transform.position) * 0.2f);
+            ApplyForces(false);
+        }
+        */
+    }
+
     protected void OnTriggerEnter(Collider other)
     {
         Bullet bullet = other.GetComponent<Bullet>();
-
         if (bullet)
         {
             OnCollisionWithBullet(bullet.EntityRigidbody.velocity.normalized);
@@ -36,10 +51,31 @@ public class Asteroid : Entity
         }
 
         Spaceship spaceShip = other.GetComponent<Spaceship>();
-
         if (spaceShip)
         {
             spaceShip.ResetSpaceship();
+
+            return;
+        }
+
+        Asteroid asteroid = other.GetComponent<Asteroid>();
+        if (asteroid)
+        {
+            m_OtherAsteroidsInRange.Add(asteroid);
+            return;
+        }
+    }
+
+    protected void OnTriggerExit(Collider other)
+    {
+        Asteroid asteroid = other.GetComponent<Asteroid>();
+
+        if (asteroid)
+        {
+            if (m_OtherAsteroidsInRange.Contains(asteroid))
+            {
+                m_OtherAsteroidsInRange.Remove(asteroid);
+            }
         }
     }
 

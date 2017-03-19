@@ -11,8 +11,7 @@ public class TargetMovement : MonoBehaviour
     protected void Start()
     {
         if (m_Circles)
-        {
-            transform.position = Vector3.forward * m_CircleDiameter;
+        {   
             m_ParentRotator.SetIsRotating(true);
         }
     }
@@ -20,6 +19,16 @@ public class TargetMovement : MonoBehaviour
     protected void Upadte()
     {
         
+    }
+
+    protected void OnValidate()
+    {
+        UpdateTargetDiameter();
+    }
+
+    private void UpdateTargetDiameter()
+    {
+        transform.position = Vector3.forward * m_CircleDiameter;
     }
 
     protected void OnDrawGizmos()

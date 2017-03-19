@@ -5,6 +5,9 @@ using System.Collections.Generic;
 [System.Serializable]
 public class GameParameters
 {
+    [Header("Spaceship")]
+    public Spaceship spaceship;
+
     [Header("Asteroids")]
     public Asteroid smallAsteroid;
     public Asteroid mediumAsteroid;
@@ -19,6 +22,8 @@ public class GameParameters
 [RequireComponent(typeof(ScoreManager))]
 public class GameManagement : MonoBehaviour
 {
+    const float SPAWN_DISTANCE_OFFSET = 2f;
+
     #region Variables
     private static GameManagement m_Instance;
     public static GameManagement Instance { get { return m_Instance; } }
@@ -70,7 +75,20 @@ public class GameManagement : MonoBehaviour
         {
             if (m_Asteroids.Count < m_GameParameters.maximumAsteroids)
             {
-                SpawnAsteroid(AsteroidType.big, Vector3.zero, ExtensionMethods.RandomVector3());
+                int i = Random.Range(0, 2);
+                AsteroidType type = i == 0 ? AsteroidType.big : AsteroidType.small;
+
+                // Defines a spawn position that is away from the player
+                Vector3 spawnPosition = Vector3.zero;
+                float distanceToSpaceship = 0f;
+
+                while (distanceToSpaceship < SPAWN_DISTANCE_OFFSET)
+                {
+                    spawnPosition = ExtensionMethods.RandomVector3() * Camera.main.orthographicSize;
+                    distanceToSpaceship = (spawnPosition - m_GameParameters.spaceship.transform.position).magnitude;
+                }
+
+                SpawnAsteroid(type, spawnPosition, ExtensionMethods.RandomVector3());
             }
 
             yield return new WaitForSeconds(m_GameParameters.delayBetweenSpawn);
