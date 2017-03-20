@@ -5,10 +5,15 @@ using UnityEngine;
 public class FlowField : MonoBehaviour
 {
     public Vector3 Direction { get; set; }
+
     private float m_MultiplierSpaceship;
     private float m_MultiplierBigAsteroid;
     private float m_MultiplierMediumAsteroid;
     private float m_MultiplierSmallAsteroid;
+
+    // If direction keeps on rotating
+    private bool m_IsRotating;
+    private bool m_Clockwise;
 
     /*
     private void Start()
@@ -34,12 +39,33 @@ public class FlowField : MonoBehaviour
     }
     */
 
+    protected void Update()
+    {
+        if (m_IsRotating)
+        {
+            if (m_Clockwise)
+            {
+                Direction = new Vector3(Mathf.Cos(Time.time), 0f, -Mathf.Sin(Time.time));
+            }
+            else
+            {
+                Direction = new Vector3(Mathf.Cos(Time.time), 0f, Mathf.Sin(Time.time));
+            }
+        }
+    }
+
     public void SetForceMultiplier(float spaceship, float bigAsteroid, float mediumAsteroid, float smallAsteroid)
     {
         m_MultiplierSpaceship = spaceship;
         m_MultiplierBigAsteroid = bigAsteroid;
         m_MultiplierMediumAsteroid = mediumAsteroid;
         m_MultiplierSmallAsteroid = smallAsteroid;
+    }
+
+    public void SetRotation(bool value, bool direction)
+    {
+        m_IsRotating = value;
+        m_Clockwise = direction;
     }
 
     protected void OnTriggerStay(Collider other)

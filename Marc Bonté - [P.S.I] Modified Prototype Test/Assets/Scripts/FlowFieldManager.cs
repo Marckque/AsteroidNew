@@ -31,7 +31,9 @@ public enum FlowFieldPreset
     none,
     random,
     gravity,
-    test,
+    alternative,
+    clockwise,
+    counterClockwise,
     wave,
     wave2
 };
@@ -69,72 +71,100 @@ public class FlowFieldManager : MonoBehaviour
 
     private void CheckPreset()
     {
-        switch(m_CurrentPreset)
+        switch (m_CurrentPreset)
         {
+            // Flow fields have a direction of zero
+            case FlowFieldPreset.none:
+                for (int i = 0; i < m_FlowFieldsParameters.flowFields.Length; i++)
+                {
+                    m_FlowFieldsParameters.flowFields[i].SetRotation(false, false);
+                    m_FlowFieldsParameters.flowFields[i].Direction = Vector3.zero;
+                }
+                break;
+
             // It makes the flow fields' direction random
             case FlowFieldPreset.random:
-                for (int i = 0; i < m_FlowFieldsParameters.flowFields.Length - 1; i++)
+                for (int i = 0; i < m_FlowFieldsParameters.flowFields.Length; i++)
                 {
+                    m_FlowFieldsParameters.flowFields[i].SetRotation(false, false);
                     m_FlowFieldsParameters.flowFields[i].Direction = ExtensionMethods.RandomVector3();
                 }
                 break;
 
             // Makes the flow fields go down
             case FlowFieldPreset.gravity:
-                for (int i = 0; i < m_FlowFieldsParameters.flowFields.Length - 1; i++)
+                for (int i = 0; i < m_FlowFieldsParameters.flowFields.Length; i++)
                 {
+                    m_FlowFieldsParameters.flowFields[i].SetRotation(false, false);
                     m_FlowFieldsParameters.flowFields[i].Direction = -Vector3.forward;
                 }
                 break;
 
-            case FlowFieldPreset.test:
-                for (int i = 0; i < 99; i++)
+            // Defines a random direction and alternates between flow fields with this direction and its opposite
+            case FlowFieldPreset.alternative:
+                Vector3 randomDirection = ExtensionMethods.RandomVector3();
+
+                for (int i = 0; i < m_FlowFieldsParameters.flowFields.Length; i++)
                 {
-                    for (int j = 0; j < 10; j++)
+                    m_FlowFieldsParameters.flowFields[i].SetRotation(false, false);
+
+                    if (i % 2 == 0)
                     {
-                        if (i % 2 == 0)
-                        {
-                            if (j % 2 == 0)
-                            {
-                                m_FlowFieldsParameters.flowFields[i].Direction = Vector3.forward;
-                            }
-                            else
-                            {
-                                m_FlowFieldsParameters.flowFields[i].Direction = -Vector3.forward;
-                            }
-                        }
+                        int randomInt = Random.Range(0, 2);
+                        float direction = randomInt == 0 ? 1 : -1;
+
+                        m_FlowFieldsParameters.flowFields[i].Direction = direction * randomDirection;
+                    }
+                    else
+                    {
+                        m_FlowFieldsParameters.flowFields[i].Direction = Vector3.zero;
                     }
                 }
                     
                 break;
 
-                /*
-            case FlowFieldPreset.test:
-                float a = 0;
-                Vector2 v = Vector2.zero;
-
-                float xOff = 0f;
-                for (int i = 0; i < 10; i++)
+            case FlowFieldPreset.clockwise:
+                for (int i = 0; i < m_FlowFieldsParameters.flowFields.Length; i++)
                 {
-                    float yOff = 0f;
-                    for (int j = 0; j < 10; j++)
-                    {
-                        if (i == 10 && j == 10)
-                        {
-                            return;
-                        }
-
-                        a = (xOff + yOff) * Mathf.PI * 2f;
-                        v = new Vector2(Mathf.Cos(a), Mathf.Sin(a));
-
-                        m_FlowFieldsParameters.flowFields[i].Direction = new Vector3(v.x, 0f, v.y);
-                        yOff += 0.01f;
-
-                    }
-                    xOff += 0.01f;
+                    randomDirection = Vector3.forward;
+                    m_FlowFieldsParameters.flowFields[i].SetRotation(true, true);
                 }
                 break;
-                */
+
+            case FlowFieldPreset.counterClockwise:
+                for (int i = 0; i < m_FlowFieldsParameters.flowFields.Length; i++)
+                {
+                    randomDirection = Vector3.forward;
+                    m_FlowFieldsParameters.flowFields[i].SetRotation(true, false);
+                }
+                break;
+            /*
+        case FlowFieldPreset.test:
+            float a = 0;
+            Vector2 v = Vector2.zero;
+
+            float xOff = 0f;
+            for (int i = 0; i < 10; i++)
+            {
+                float yOff = 0f;
+                for (int j = 0; j < 10; j++)
+                {
+                    if (i == 10 && j == 10)
+                    {
+                        return;
+                    }
+
+                    a = (xOff + yOff) * Mathf.PI * 2f;
+                    v = new Vector2(Mathf.Cos(a), Mathf.Sin(a));
+
+                    m_FlowFieldsParameters.flowFields[i].Direction = new Vector3(v.x, 0f, v.y);
+                    yOff += 0.01f;
+
+                }
+                xOff += 0.01f;
+            }
+            break;
+            */
             /*
             case FlowFieldPreset.wave:
                 test = new Vector3[10, 10];    
@@ -168,7 +198,6 @@ public class FlowFieldManager : MonoBehaviour
             */
 
             // It makes flow fields' direction to be Vector.zero;
-            case FlowFieldPreset.none:
             default:
                 break;
 
@@ -212,5 +241,10 @@ public class FlowFieldManager : MonoBehaviour
         {
             SetTarget();
         }
+    }
+
+    protected void OnValidate()
+    {
+        CheckPreset();
     }
 }
