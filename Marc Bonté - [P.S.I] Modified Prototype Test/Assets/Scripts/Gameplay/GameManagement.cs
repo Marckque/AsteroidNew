@@ -77,8 +77,8 @@ public class GameManagement : MonoBehaviour
         {
             if (m_Asteroids.Count < m_GameParameters.maximumAsteroids)
             {
-                int i = Random.Range(0, 2);
-                AsteroidType type = i == 0 ? AsteroidType.big : AsteroidType.small;
+                //int i = Random.Range(0, 2);
+                //AsteroidType type = i == 0 ? AsteroidType.big : AsteroidType.small;
 
                 // Defines a spawn position that is away from the player
                 Vector3 spawnPosition = Vector3.zero;
@@ -90,7 +90,7 @@ public class GameManagement : MonoBehaviour
                     distanceToSpaceship = (spawnPosition - m_GameParameters.spaceship.transform.position).magnitude;
                 }
 
-                SpawnAsteroid(type, spawnPosition, ExtensionMethods.RandomVector3());
+                SpawnAsteroid(AsteroidType.big, spawnPosition, ExtensionMethods.RandomVector3());
             }
 
             yield return new WaitForSeconds(m_GameParameters.delayBetweenSpawn);

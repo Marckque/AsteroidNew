@@ -18,7 +18,5 @@ public class SmallAsteroid : Asteroid
     protected override void OnCollisionWithBullet(Vector3 direction)
     {
         base.OnCollisionWithBullet(direction);
-
-        Destroy(gameObject);
     }
 }

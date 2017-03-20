@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 public enum AsteroidType
@@ -8,20 +9,34 @@ public enum AsteroidType
     big = 2
 };
 
+[System.Serializable]
+public class AsteroidEffects
+{
+    [Header("VFX")]
+    public ParticleSystem m_DestroyedVFX;
+}
+
 public class Asteroid : Entity
 {
+    [SerializeField]
+    private AsteroidEffects m_AsteroidEffects;
     [SerializeField, Range(0f, 1f)]
     protected float m_AccelerationMultiplier = 1f;
     [SerializeField]
     private int m_Points = 100;
 
     private List<Asteroid> m_OtherAsteroidsInRange = new List<Asteroid>();
+    private Transform m_Graphics;
+    private BoxCollider m_BoxCollider;
 
     public AsteroidType AsteroidType { get; set; }
 
     protected override void Awake()
     {
         base.Awake();
+
+        m_Graphics = transform.GetChild(0);
+        m_BoxCollider = GetComponent<BoxCollider>();
     }
 
     protected override void FixedUpdate()
@@ -79,6 +94,21 @@ public class Asteroid : Entity
     protected virtual void OnCollisionWithBullet(Vector3 direction)
     {
         GameManagement.Instance.ScoreManager.AddScore(m_Points);
+
+        StartCoroutine(DestroyAsteroid(transform.position));
+    }
+
+    private IEnumerator DestroyAsteroid(Vector3 particlePosition)
+    {
+        m_BoxCollider.enabled = false;
+        m_Graphics.gameObject.SetActive(false);
+
+        m_AsteroidEffects.m_DestroyedVFX.transform.position = particlePosition;
+        m_AsteroidEffects.m_DestroyedVFX.Play();
+
+        yield return new WaitForSeconds(1f);
+
+        Destroy(gameObject);
     }
 
     protected override void OnDrawGizmos()

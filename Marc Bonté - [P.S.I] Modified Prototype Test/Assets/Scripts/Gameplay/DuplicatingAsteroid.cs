@@ -59,7 +59,5 @@ public class DuplicatingAsteroid : Asteroid
                 GameManagement.Instance.SpawnAsteroid(m_AsteroidToSpawn, transform.position, randomDirection);
             }
         }
-
-        Destroy(gameObject);
     }
 }
