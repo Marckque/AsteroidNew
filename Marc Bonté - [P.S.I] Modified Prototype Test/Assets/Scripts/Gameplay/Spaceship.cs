@@ -25,9 +25,10 @@ public class SpaceshipEffects
 
 public class Spaceship : Entity
 {
-    #region Variables
     private const float BORDER_OFFSET = 1.5f;
+    private const float SPAWN_DISTANCE_OFFSET = 2f;
 
+    #region Variables
     [SerializeField]
     private SpaceshipControls m_Controls = new SpaceshipControls();
     [SerializeField]
@@ -40,8 +41,8 @@ public class Spaceship : Entity
 
     private float m_RotationInput;
     private Vector3 m_TargetRotation;
-
-    public bool test;
+    
+    public bool IsUsingForwardInput { get; set; }
     #endregion Variables
 
     protected override void Update()
@@ -79,12 +80,12 @@ public class Spaceship : Entity
     {
         if (Input.GetKey(KeyCode.UpArrow))
         {
+            IsUsingForwardInput = true;
             SetAcceleration(transform.InverseTransformDirection(transform.forward));
-            test = true;
         }
         else
         {
-            test = false;
+            IsUsingForwardInput = false;
         }
     }
 
@@ -119,7 +120,44 @@ public class Spaceship : Entity
         m_SpaceshipEffects.m_DestroyedVFX.Play();
 
         m_EntityRigidbody.velocity = Vector3.zero;
-        transform.position = Vector3.zero;
+
+        Vector3 respawnPosition = Vector3.zero;
+        float distanceToSpaceship = 0f;
+        int numOfIteration = 0;
+
+        while (distanceToSpaceship > SPAWN_DISTANCE_OFFSET)
+        {
+            respawnPosition = ExtensionMethods.RandomVector3() * Camera.main.orthographicSize;
+
+            if (numOfIteration > 3)
+            {
+                foreach (Asteroid asteroid in GameManagement.Instance.CurrentAsteroids)
+                {
+                    distanceToSpaceship = (asteroid.transform.position - transform.position).magnitude;
+
+                    if (distanceToSpaceship > SPAWN_DISTANCE_OFFSET * 0.5f)
+                    {
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                foreach (Asteroid asteroid in GameManagement.Instance.CurrentAsteroids)
+                {
+                    distanceToSpaceship = (asteroid.transform.position - transform.position).magnitude;
+
+                    if (distanceToSpaceship > SPAWN_DISTANCE_OFFSET)
+                    {
+                        break;
+                    }
+                }
+            }
+            
+            numOfIteration++;
+        }
+
+        transform.position = respawnPosition;
     }
 
     protected override void OnDrawGizmos()

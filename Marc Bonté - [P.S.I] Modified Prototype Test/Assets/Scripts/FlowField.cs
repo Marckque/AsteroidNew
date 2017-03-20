@@ -4,12 +4,14 @@ using UnityEngine;
 
 public class FlowField : MonoBehaviour
 {
-    public Vector3 Direction { get; set; }
+    private const float SPACESHIP_IS_USING_FORWARD_INPUT_MULTIPLIER = 0.25f;
 
     private float m_MultiplierSpaceship;
     private float m_MultiplierBigAsteroid;
     private float m_MultiplierMediumAsteroid;
     private float m_MultiplierSmallAsteroid;
+
+    public Vector3 Direction { get; set; }
 
     // If direction keeps on rotating
     private bool m_IsRotating;
@@ -77,7 +79,16 @@ public class FlowField : MonoBehaviour
         {
             if (entity is Spaceship)
             {
-                directionMultiplier = m_MultiplierSpaceship;
+                Spaceship spaceship = entity as Spaceship;
+
+                if (spaceship.IsUsingForwardInput)
+                {
+                    directionMultiplier = m_MultiplierSpaceship * SPACESHIP_IS_USING_FORWARD_INPUT_MULTIPLIER;
+                }
+                else
+                {
+                    directionMultiplier = m_MultiplierSpaceship;
+                }
             }
             else if (entity is Asteroid)
             {

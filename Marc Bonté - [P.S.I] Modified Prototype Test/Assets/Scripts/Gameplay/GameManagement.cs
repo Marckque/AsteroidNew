@@ -35,7 +35,9 @@ public class GameManagement : MonoBehaviour
     private GameParameters m_GameParameters;
 
     private int m_NumberOfSpawnedAsteroids;
+
     private List<Asteroid> m_Asteroids = new List<Asteroid>();
+    public List<Asteroid> CurrentAsteroids { get { return m_Asteroids; } }
     #endregion Variables
 
     protected void Awake()
