@@ -33,7 +33,9 @@ public enum FlowFieldPreset
     gravity,
     alternative,
     clockwise,
+    addClockwiseToCurrent,
     counterClockwise,
+    addCounterClockwiseToCurrent,
     wave,
     wave2
 };
@@ -123,6 +125,7 @@ public class FlowFieldManager : MonoBehaviour
                     
                 break;
 
+            // Adds clockwise rotation to all direction of flow fields (all direction are pointing in the same direction)
             case FlowFieldPreset.clockwise:
                 for (int i = 0; i < m_FlowFieldsParameters.flowFields.Length; i++)
                 {
@@ -131,6 +134,15 @@ public class FlowFieldManager : MonoBehaviour
                 }
                 break;
 
+            // Adds clockwise rotation to all direction of flow fields (directions are pointing to the direction they were pointing before this mode has been activated)
+            case FlowFieldPreset.addClockwiseToCurrent:
+                for (int i = 0; i < m_FlowFieldsParameters.flowFields.Length; i++)
+                {
+                    m_FlowFieldsParameters.flowFields[i].SetRotation(true, true);
+                }
+                break;
+
+            // Adds counter clockwise rotation to all direction of flow fields (all direction are pointing in the same direction)
             case FlowFieldPreset.counterClockwise:
                 for (int i = 0; i < m_FlowFieldsParameters.flowFields.Length; i++)
                 {
@@ -138,6 +150,15 @@ public class FlowFieldManager : MonoBehaviour
                     m_FlowFieldsParameters.flowFields[i].SetRotation(true, false);
                 }
                 break;
+
+            // Adds counter clockwise rotation to all direction of flow fields (directions are pointing to the direction they were pointing before this mode has been activated)
+            case FlowFieldPreset.addCounterClockwiseToCurrent:
+                for (int i = 0; i < m_FlowFieldsParameters.flowFields.Length; i++)
+                {
+                    m_FlowFieldsParameters.flowFields[i].SetRotation(true, false);
+                }
+                break;
+
             /*
         case FlowFieldPreset.test:
             float a = 0;
