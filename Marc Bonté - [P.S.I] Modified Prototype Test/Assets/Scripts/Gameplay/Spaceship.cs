@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-
+using System.Collections;
 
 [System.Serializable] // !!! USE THESE CONTROLS !!!
 public class SpaceshipControls
@@ -17,6 +17,7 @@ public class SpaceshipParameters
     public float maxMagnitudeMultiplier = 1f;
     public float rotationSpeed = 10f;
     public float shootOffset = 1f;
+    public float respawnTime = 1f;
 }
 
 [System.Serializable]
@@ -42,6 +43,7 @@ public class Spaceship : Entity
     [SerializeField]
     private Bullet m_Bullet;
 
+    private Transform m_Graphics;
     private float m_RotationInput;
     private Vector3 m_TargetRotation;
     private float m_DefaultDrag;
@@ -52,6 +54,7 @@ public class Spaceship : Entity
 
     protected void Start()
     {
+        m_Graphics = transform.GetChild(0);
         m_DefaultDrag = m_EntityRigidbody.drag;
         m_IdleDrag = m_DefaultDrag * m_SpaceshipParameters.maxMagnitudeMultiplier;
     }
@@ -168,7 +171,15 @@ public class Spaceship : Entity
             numOfIteration++;
         }
 
+        StartCoroutine(RespawnDelay(respawnPosition));
+    }
+
+    private IEnumerator RespawnDelay(Vector3 respawnPosition)
+    {
+        m_Graphics.gameObject.SetActive(false);
+        yield return new WaitForSeconds(m_SpaceshipParameters.respawnTime);
         transform.position = respawnPosition;
+        m_Graphics.gameObject.SetActive(true);
     }
 
     protected override void OnDrawGizmos()
