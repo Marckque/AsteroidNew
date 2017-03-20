@@ -27,14 +27,6 @@ public class Asteroid : Entity
     protected override void FixedUpdate()
     {
         base.FixedUpdate();
-
-        /*
-        foreach(Asteroid asteroid in m_OtherAsteroidsInRange)
-        {
-            SetAcceleration((transform.position - asteroid.transform.position) * 0.2f);
-            ApplyForces(false);
-        }
-        */
     }
 
     protected void OnTriggerEnter(Collider other)

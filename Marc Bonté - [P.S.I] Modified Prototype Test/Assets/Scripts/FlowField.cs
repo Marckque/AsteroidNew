@@ -17,30 +17,6 @@ public class FlowField : MonoBehaviour
     private bool m_IsRotating;
     private bool m_Clockwise;
 
-    /*
-    private void Start()
-    {
-        int lol = Random.Range(0, 4);
-
-        if (lol == 0)
-        {
-            Direction = Vector3.right;
-        }
-        else if (lol == 1)
-        {
-            Direction = -Vector3.right;
-        }
-        else if (lol == 2)
-        {
-            Direction = Vector3.forward;
-        }
-        else
-        {
-            Direction = -Vector3.forward;
-        }
-    }
-    */
-
     protected void Update()
     {
         if (m_IsRotating)

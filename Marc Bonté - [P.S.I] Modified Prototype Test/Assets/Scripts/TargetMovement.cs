@@ -16,11 +16,6 @@ public class TargetMovement : MonoBehaviour
         }
     }
 
-    protected void Upadte()
-    {
-        
-    }
-
     protected void OnValidate()
     {
         UpdateTargetDiameter();

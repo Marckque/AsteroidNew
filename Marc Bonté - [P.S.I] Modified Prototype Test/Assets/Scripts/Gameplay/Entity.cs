@@ -11,7 +11,7 @@ public class EntityParameters
 public class Entity : MonoBehaviour
 {
     [SerializeField]
-    private EntityParameters m_EntityParameters = new EntityParameters();
+    protected EntityParameters m_EntityParameters = new EntityParameters();
     public EntityParameters EntityParameters { get { return m_EntityParameters; } }
 
     private const float BORDER_MARGIN = 0.5f;
@@ -64,61 +64,6 @@ public class Entity : MonoBehaviour
         {
             transform.position = new Vector3(transform.position.x, 0f, -Camera.main.orthographicSize + BORDER_MARGIN);
         }
-        
-
-        /*
-        Vector3 newPosition = Vector3.zero;
-        newPosition.y = 0;
-
-        // Horizontal constrain
-        if (Camera.main.WorldToScreenPoint(transform.position).x < 0f)
-        {
-            newPosition.x = Screen.width;
-
-            Vector3 lol = Camera.main.ScreenToWorldPoint(newPosition);
-            lol.y = 0f;
-
-            transform.position = lol;
-        }
-        else if (Camera.main.WorldToScreenPoint(transform.position).x > Screen.width)
-        {
-            newPosition.x = 0;
-            
-            Vector3 lol = Camera.main.ScreenToWorldPoint(newPosition);
-            lol.y = 0f;
-
-            transform.position = lol;
-        }
-
-        if (Camera.main.WorldToScreenPoint(transform.position).z < 0f)
-        {
-            newPosition.z = Screen.height;
-
-            Vector3 lol = Camera.main.ScreenToWorldPoint(newPosition);
-            lol.y = 0f;
-
-            transform.position = lol;
-        }
-        else if (Camera.main.WorldToScreenPoint(transform.position).z > Screen.height)
-        {
-            newPosition.z = 0;
-
-            Vector3 lol = Camera.main.ScreenToWorldPoint(newPosition);
-            lol.y = 0f;
-
-            transform.position = lol;
-        }
-
-        // Vertical constrain
-        if (transform.position.z < -Camera.main.orthographicSize)
-        {
-            transform.position = new Vector3(transform.position.x, 0f, Camera.main.orthographicSize - BORDER_MARGIN);
-        }
-        else if (transform.position.z > Camera.main.orthographicSize)
-        {
-            transform.position = new Vector3(transform.position.x, 0f, -Camera.main.orthographicSize + BORDER_MARGIN);
-        }
-        */
     }
 
     public void SetAcceleration(Vector3 force)

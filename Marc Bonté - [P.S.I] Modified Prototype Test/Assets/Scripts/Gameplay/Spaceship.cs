@@ -1,17 +1,20 @@
 ﻿using UnityEngine;
 
-[System.Serializable]
+
+[System.Serializable] // !!! USE THESE CONTROLS !!!
 public class SpaceshipControls
 {
     public string rotation = "Horizontal";
     public string moveForward = "MoveForward";
     public string shoot = "Shoot";
-    public string teleport;
+    public string teleport = "Teleport";
 }
 
 [System.Serializable]
 public class SpaceshipParameters
 {
+    [Range(1f, 100f)]
+    public float maxMagnitudeMultiplier = 1f;
     public float rotationSpeed = 10f;
     public float shootOffset = 1f;
 }
@@ -41,9 +44,17 @@ public class Spaceship : Entity
 
     private float m_RotationInput;
     private Vector3 m_TargetRotation;
-    
+    private float m_DefaultDrag;
+    private float m_IdleDrag;
+
     public bool IsUsingForwardInput { get; set; }
     #endregion Variables
+
+    protected void Start()
+    {
+        m_DefaultDrag = m_EntityRigidbody.drag;
+        m_IdleDrag = m_DefaultDrag * m_SpaceshipParameters.maxMagnitudeMultiplier;
+    }
 
     protected override void Update()
     {
@@ -58,8 +69,6 @@ public class Spaceship : Entity
 
     protected override void FixedUpdate()
     {
-        //base.FixedUpdate();
-
         RotateSpaceship();
         ApplyForces(true);
     }
@@ -72,7 +81,6 @@ public class Spaceship : Entity
             Quaternion newRotation = Quaternion.Slerp(transform.rotation, targetRotation, m_SpaceshipParameters.rotationSpeed * Time.deltaTime);
 
             m_EntityRigidbody.MoveRotation(newRotation);
-            //transform.rotation = newRotation;
         }
     }
 
@@ -80,11 +88,14 @@ public class Spaceship : Entity
     {
         if (Input.GetKey(KeyCode.UpArrow))
         {
+            m_EntityRigidbody.drag = m_DefaultDrag;
             IsUsingForwardInput = true;
             SetAcceleration(transform.InverseTransformDirection(transform.forward));
+            
         }
         else
         {
+            m_EntityRigidbody.drag = m_IdleDrag;
             IsUsingForwardInput = false;
         }
     }
