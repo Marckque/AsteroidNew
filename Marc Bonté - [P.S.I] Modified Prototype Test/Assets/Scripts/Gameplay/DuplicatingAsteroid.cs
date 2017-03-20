@@ -27,17 +27,19 @@ public class DuplicatingAsteroid : Asteroid
     protected override void OnCollisionWithKilling(Vector3 direction)
     {
         base.OnCollisionWithKilling(direction);
+        int numberOfAsteroidToSpawn = 0;
 
         switch (AsteroidType)
         {
             case AsteroidType.medium:
-
+                numberOfAsteroidToSpawn = 2;
                 break;
             case AsteroidType.big:
+                numberOfAsteroidToSpawn = 1;
                 break;
         }
 
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i < numberOfAsteroidToSpawn; i++)
         {
             Vector3 randomDirection = ExtensionMethods.RandomVector3();
             randomDirection.y = 0f;

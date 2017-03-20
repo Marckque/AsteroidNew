@@ -25,7 +25,8 @@ public class SpaceshipParameters
 public class SpaceshipEffects
 {
     [Header("VFX")]
-    public ParticleSystem m_DestroyedVFX;
+    public ParticleSystem destroyedVFX;
+    public TrailRenderer trail;
 }
 
 public class Spaceship : Entity
@@ -97,12 +98,15 @@ public class Spaceship : Entity
             m_EntityRigidbody.drag = m_DefaultDrag;
             IsUsingForwardInput = true;
             SetAcceleration(transform.InverseTransformDirection(transform.forward));
-            
+
+            m_SpaceshipEffects.trail.enabled = true;
         }
         else
         {
             m_EntityRigidbody.drag = m_IdleDrag;
             IsUsingForwardInput = false;
+
+            m_SpaceshipEffects.trail.enabled = false;
         }
     }
 
@@ -133,8 +137,8 @@ public class Spaceship : Entity
 
     public void ResetSpaceship()
     {
-        m_SpaceshipEffects.m_DestroyedVFX.transform.position = transform.position;
-        m_SpaceshipEffects.m_DestroyedVFX.Play();
+        m_SpaceshipEffects.destroyedVFX.transform.position = transform.position;
+        m_SpaceshipEffects.destroyedVFX.Play();
 
         m_EntityRigidbody.velocity = Vector3.zero;
 

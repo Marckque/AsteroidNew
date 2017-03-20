@@ -17,6 +17,6 @@ public class RandomRotator : MonoBehaviour
 
 	protected void Update()
     {
-        //transform.Rotate(m_RotationDirection * m_Speed);
+        transform.Rotate(m_RotationDirection * m_Speed);
 	}
 }
