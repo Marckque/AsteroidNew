@@ -18,6 +18,7 @@ public class SpaceshipParameters
     public float rotationSpeed = 10f;
     public float shootOffset = 1f;
     public float respawnTime = 1f;
+    public float invincibilityDuration = 1f;
 }
 
 [System.Serializable]
@@ -31,6 +32,7 @@ public class Spaceship : Entity
 {
     private const float BORDER_OFFSET = 1.5f;
     private const float SPAWN_DISTANCE_OFFSET = 2f;
+    private const float BLINK_DURATION = 5f;
 
     #region Variables
     [SerializeField]
@@ -50,6 +52,7 @@ public class Spaceship : Entity
     private float m_IdleDrag;
 
     public bool IsUsingForwardInput { get; set; }
+    public bool IsInvincible { get; set; }
     #endregion Variables
 
     protected void Start()
@@ -180,6 +183,33 @@ public class Spaceship : Entity
         yield return new WaitForSeconds(m_SpaceshipParameters.respawnTime);
         transform.position = respawnPosition;
         m_Graphics.gameObject.SetActive(true);
+
+        StartCoroutine(TemporaryInvincibility());
+    }
+
+    private IEnumerator TemporaryInvincibility()
+    {
+        IsInvincible = true;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < m_SpaceshipParameters.invincibilityDuration)
+        {
+            if (m_Graphics.gameObject.activeInHierarchy)
+            {
+                m_Graphics.gameObject.SetActive(false);
+            }
+            else
+            {
+                m_Graphics.gameObject.SetActive(true);
+            }
+
+            elapsedTime += Time.deltaTime * BLINK_DURATION;
+
+            yield return new WaitForSeconds(Time.deltaTime * BLINK_DURATION);
+        }
+
+        m_Graphics.gameObject.SetActive(true);
+        IsInvincible = false;
     }
 
     protected override void OnDrawGizmos()

@@ -49,7 +49,7 @@ public class Asteroid : Entity
         Bullet bullet = other.GetComponent<Bullet>();
         if (bullet)
         {
-            OnCollisionWithBullet(bullet.EntityRigidbody.velocity.normalized);
+            OnCollisionWithKilling(bullet.EntityRigidbody.velocity.normalized);
             Destroy(bullet.gameObject);
 
             GameManagement.Instance.RemoveAsteroidFromList(this);
@@ -60,7 +60,14 @@ public class Asteroid : Entity
         Spaceship spaceShip = other.GetComponent<Spaceship>();
         if (spaceShip)
         {
-            spaceShip.ResetSpaceship();
+            if (!spaceShip.IsInvincible)
+            {
+                spaceShip.ResetSpaceship();
+            }
+            else
+            {
+                OnCollisionWithKilling(ExtensionMethods.RandomVector3());
+            }
 
             return;
         }
@@ -91,7 +98,7 @@ public class Asteroid : Entity
         // Use in child
     }
 
-    protected virtual void OnCollisionWithBullet(Vector3 direction)
+    protected virtual void OnCollisionWithKilling(Vector3 direction)
     {
         GameManagement.Instance.ScoreManager.AddScore(m_Points);
 

@@ -24,9 +24,9 @@ public class DuplicatingAsteroid : Asteroid
         EntityParameters.accelerationScalar *= 1 - (Random.Range(0f, m_AccelerationMultiplier));
     }
 
-    protected override void OnCollisionWithBullet(Vector3 direction)
+    protected override void OnCollisionWithKilling(Vector3 direction)
     {
-        base.OnCollisionWithBullet(direction);
+        base.OnCollisionWithKilling(direction);
 
         switch (AsteroidType)
         {
