@@ -25,7 +25,7 @@ public class GameParameters
 [RequireComponent(typeof(ScoreManager))]
 public class GameManagement : MonoBehaviour
 {
-    const float SPAWN_DISTANCE_OFFSET = 2f;
+    const float SPAWN_DISTANCE_OFFSET = 1.75f;
 
     #region Variables
     private static GameManagement m_Instance;
@@ -74,6 +74,7 @@ public class GameManagement : MonoBehaviour
     }
     #endregion Initialisers
 
+    // Reload scene
     protected void Update()
     {
         if (Input.GetKeyDown(KeyCode.R))
@@ -127,13 +128,13 @@ public class GameManagement : MonoBehaviour
         }
 
         Asteroid asteroid = Instantiate(asteroidToSpawn, spawnPosition, Quaternion.identity);
-        asteroid.transform.SetParent(m_GameParameters.asteroidSpawnParent);
+        asteroid.transform.SetParent(m_GameParameters.asteroidSpawnParent); // Avois the hierarchy to be filled with asteroids gameObjects
         asteroid.SetAcceleration(direction * asteroid.EntityParameters.accelerationScalar);
         asteroid.ApplyForces(false);
 
         asteroid.AsteroidType = type;
 
-        m_Asteroids.Add(asteroid);
+        m_Asteroids.Add(asteroid); // Add to the list of asteroids
     }
 
     public void RemoveAsteroidFromList(Asteroid asteroidToRemove)

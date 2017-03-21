@@ -1,13 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class FlowField : MonoBehaviour
 {
+    private const float SPACESHIP_IS_USING_FORWARD_INPUT_MULTIPLIER = 0.25f;
+
     [SerializeField]
     private Transform m_ArrowGraphics;
-
-    private const float SPACESHIP_IS_USING_FORWARD_INPUT_MULTIPLIER = 0.25f;
 
     private float m_MultiplierSpaceship;
     private float m_MultiplierBigAsteroid;
@@ -22,6 +20,7 @@ public class FlowField : MonoBehaviour
 
     protected void Update()
     {
+        // Rotates the direction
         if (m_IsRotating)
         {
             if (m_Clockwise)
@@ -34,6 +33,7 @@ public class FlowField : MonoBehaviour
             }
         }
 
+        // Manage graphics
         if (Direction != Vector3.zero)
         {
             if (!m_ArrowGraphics.gameObject.activeInHierarchy)

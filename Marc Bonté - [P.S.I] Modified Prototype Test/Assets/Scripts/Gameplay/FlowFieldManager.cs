@@ -5,14 +5,19 @@ public class FlowFieldsParameters
 {
     [Header("Flow fields")]
     public Transform flowFieldContainer;
+
     [HideInInspector]
     public FlowField[] flowFields;
+
     [Range(0f, 3f)]
     public float spaceshipMultiplier = 1f;
+
     [Range(0f, 3f)]
     public float bigAsteroidMultiplier = 1f;
+
     [Range(0f, 3f)]
     public float mediumAsteroidMultiplier = 1f;
+
     [Range(0f, 3f)]
     public float smallAsteroidMultiplier = 1f;
 }
@@ -22,8 +27,10 @@ public class FlowFieldsTarget
 {
     [Header("Target parameters")]
     public Transform flowFieldsTarget;
+
     [Tooltip("If this variable is false, all booleans below will be false")]
     public bool useTarget;
+
     public bool updateDirectionInRealTime;
 }
 
@@ -49,8 +56,6 @@ public class FlowFieldManager : MonoBehaviour
     private FlowFieldsTarget m_FlowFieldsTarget = new FlowFieldsTarget();
     [SerializeField]
     private FlowFieldPreset m_CurrentPreset;
-
-    private Vector3[,] test;
 
     protected void Awake()
     {
@@ -135,8 +140,7 @@ public class FlowFieldManager : MonoBehaviour
                     {
                         m_FlowFieldsParameters.flowFields[i].Direction = Vector3.zero;
                     }
-                }
-                    
+                } 
                 break;
 
             // Adds clockwise rotation to all direction of flow fields (all direction are pointing in the same direction)
@@ -236,10 +240,8 @@ public class FlowFieldManager : MonoBehaviour
             // It makes flow fields' direction to be Vector.zero;
             default:
                 break;
-
         }
     }
-
 
     // Functions to set values (force, direction, etc...) on flow fields
     private void InitialiseFlowFieldsForceMultiplier()

@@ -1,11 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class RandomRotator : MonoBehaviour
 {
-    public float m_MinimumRotationSpeed = 0.25f;
-    public float m_MaximumRotationSpeed = 0.75f;
+    [SerializeField]
+    private float m_MinimumRotationSpeed = 0.25f;
+    [SerializeField]
+    private float m_MaximumRotationSpeed = 0.75f;
+
     private float m_Speed;
     private Vector3 m_RotationDirection;
 

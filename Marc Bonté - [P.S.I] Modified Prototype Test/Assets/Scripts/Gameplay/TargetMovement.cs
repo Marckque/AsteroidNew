@@ -2,10 +2,12 @@
 
 public class TargetMovement : MonoBehaviour
 {
-    [Header("Circle path")]
-    public bool m_Circles;
-    public Rotator m_ParentRotator;
-    public float m_CircleDiameter;
+    [Header("Circle path"), SerializeField]
+    private bool m_Circles;
+    [SerializeField]
+    private TargetRotator m_ParentRotator;
+    [SerializeField]
+    private float m_CircleDiameter;
 
     [ExecuteInEditMode]
     protected void Start()
