@@ -16,6 +16,8 @@ public class DuplicatingAsteroid : Asteroid
     [SerializeField, Range(1f, 10f)]
     private float m_MaximumDestroyVelocityMultiplier = 4f;
     private float m_DestroyVelocityMultiplier = 1f;
+    [SerializeField]
+    private int m_NumberOfAsteroidsToSpawn;
 
     protected override void Awake()
     {
@@ -34,21 +36,18 @@ public class DuplicatingAsteroid : Asteroid
     protected override void OnCollisionWithKilling(Vector3 direction)
     {
         base.OnCollisionWithKilling(direction);
-        int numberOfAsteroidToSpawn = 0;
 
         switch (AsteroidType)
         {
             case AsteroidType.medium:
-                numberOfAsteroidToSpawn = 2;
                 m_DestroyVelocityMultiplier = m_MaximumDestroyVelocityMultiplier;
                 break;
             case AsteroidType.big:
-                numberOfAsteroidToSpawn = 1;
                 m_DestroyVelocityMultiplier = m_MinimimDestroyVelocityMultiplier;
                 break;
         }
 
-        for (int i = 0; i < numberOfAsteroidToSpawn; i++)
+        for (int i = 0; i < m_NumberOfAsteroidsToSpawn; i++)
         {
             Vector3 randomDirection = ExtensionMethods.RandomVector3();
             randomDirection.y = 0f;
