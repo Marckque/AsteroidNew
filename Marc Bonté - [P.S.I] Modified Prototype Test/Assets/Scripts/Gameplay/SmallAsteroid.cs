@@ -12,7 +12,7 @@ public class SmallAsteroid : Asteroid
     protected override void InitialiseVelocity()
     {
         base.InitialiseVelocity();
-        EntityParameters.accelerationScalar *= 1 + (Random.Range(0f, m_AccelerationMultiplier));
+        EntityParameters.accelerationScalar *= 1 + (Random.Range(0f, m_AsteroidParameters.accelerationMultiplier));
     }
 
     protected override void OnCollisionWithKilling(Vector3 direction)

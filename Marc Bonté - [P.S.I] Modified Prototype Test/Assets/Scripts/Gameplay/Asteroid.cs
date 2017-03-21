@@ -9,15 +9,23 @@ public enum AsteroidType
     big = 2
 };
 
+[System.Serializable]
+public class AsteroidParameters
+{
+    [Range(0f, 1f)]
+    public float accelerationMultiplier = 1f;
+    public int pointsGiven = 100;
+}
+
 public class Asteroid : Entity
 {
-    [SerializeField, Range(0f, 1f)]
-    protected float m_AccelerationMultiplier = 1f;
     [SerializeField]
-    private int m_Points = 100;
+    protected AsteroidParameters m_AsteroidParameters;
 
-    private List<Asteroid> m_OtherAsteroidsInRange = new List<Asteroid>();
-    private Transform m_Graphics;
+    [Header("Graphics"), SerializeField]
+    private MeshRenderer m_Graphics;
+
+    [Header("Collider"), SerializeField]
     private BoxCollider m_BoxCollider;
 
     public AsteroidType AsteroidType { get; set; }
@@ -25,9 +33,6 @@ public class Asteroid : Entity
     protected override void Awake()
     {
         base.Awake();
-
-        m_Graphics = transform.GetChild(0);
-        m_BoxCollider = GetComponent<BoxCollider>();
     }
 
     protected override void FixedUpdate()
@@ -57,36 +62,16 @@ public class Asteroid : Entity
             }
             return;
         }
-
-        Asteroid asteroid = other.GetComponent<Asteroid>();
-        if (asteroid)
-        {
-            m_OtherAsteroidsInRange.Add(asteroid);
-            return;
-        }
-    }
-
-    protected void OnTriggerExit(Collider other)
-    {
-        Asteroid asteroid = other.GetComponent<Asteroid>();
-
-        if (asteroid)
-        {
-            if (m_OtherAsteroidsInRange.Contains(asteroid))
-            {
-                m_OtherAsteroidsInRange.Remove(asteroid);
-            }
-        }
     }
 
     protected virtual void InitialiseVelocity()
     {
-        // Use in child
+        // Used in children
     }
 
     protected virtual void OnCollisionWithKilling(Vector3 direction)
     {
-        GameManagement.Instance.ScoreManager.AddScore(m_Points);
+        GameManagement.Instance.ScoreManager.AddScore(m_AsteroidParameters.pointsGiven);
 
         StartCoroutine(DestroyAsteroid(transform.position));
     }
@@ -94,7 +79,7 @@ public class Asteroid : Entity
     private IEnumerator DestroyAsteroid(Vector3 particlePosition)
     {
         m_BoxCollider.enabled = false;
-        m_Graphics.gameObject.SetActive(false);
+        m_Graphics.enabled = false;
 
         // VFX
         m_EntityEffects.explosionVFX.transform.position = particlePosition;
