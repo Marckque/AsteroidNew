@@ -52,6 +52,8 @@ public class Spaceship : Entity
     private float m_DefaultDrag;
     private float m_IdleDrag;
 
+    private CapsuleCollider m_CapsuleCollider;
+
     public bool IsUsingForwardInput { get; set; }
     public bool IsInvincible { get; set; }
     #endregion Variables
@@ -59,6 +61,8 @@ public class Spaceship : Entity
     protected void Start()
     {
         m_Graphics = transform.GetChild(0);
+        m_CapsuleCollider = GetComponent<CapsuleCollider>();
+
         m_DefaultDrag = m_EntityRigidbody.drag;
         m_IdleDrag = m_DefaultDrag * m_SpaceshipParameters.maxMagnitudeMultiplier;
     }
@@ -183,10 +187,15 @@ public class Spaceship : Entity
 
     private IEnumerator RespawnDelay(Vector3 respawnPosition)
     {
+        m_CapsuleCollider.enabled = false;
         m_Graphics.gameObject.SetActive(false);
+
         yield return new WaitForSeconds(m_SpaceshipParameters.respawnTime);
+
         transform.position = respawnPosition;
+
         m_Graphics.gameObject.SetActive(true);
+        m_CapsuleCollider.enabled = true;
 
         StartCoroutine(TemporaryInvincibility());
     }

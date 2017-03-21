@@ -7,6 +7,12 @@ public class EntityParameters
     public float maxVelocityMagnitude = 1f;
 }
 
+[System.Serializable]
+public class EntityEffects
+{
+    public TrailRenderer trail;
+}
+
 [RequireComponent(typeof(Rigidbody))]
 public class Entity : MonoBehaviour
 {
@@ -14,12 +20,14 @@ public class Entity : MonoBehaviour
     protected EntityParameters m_EntityParameters = new EntityParameters();
     public EntityParameters EntityParameters { get { return m_EntityParameters; } }
 
+    [SerializeField]
+    protected EntityEffects m_EntityEffects = new EntityEffects();
+
     private const float BORDER_MARGIN = 0.5f;
 
     protected Vector3 m_Acceleration;
     protected Rigidbody m_EntityRigidbody;
     public Rigidbody EntityRigidbody { get { return m_EntityRigidbody; } }
-    
 
     protected virtual void Awake()
     {
@@ -44,24 +52,27 @@ public class Entity : MonoBehaviour
 
     private void ConstrainPositionToCamera()
     {
-        
         // Horizontal constrain
         if (transform.position.x < -Camera.main.orthographicSize)
         {
+            if (m_EntityEffects.trail) m_EntityEffects.trail.Clear();
             transform.position = new Vector3(Camera.main.orthographicSize - BORDER_MARGIN, 0f, transform.position.z);
         }
         else if (transform.position.x > Camera.main.orthographicSize)
         {
+            if (m_EntityEffects.trail) m_EntityEffects.trail.Clear();
             transform.position = new Vector3(-Camera.main.orthographicSize + BORDER_MARGIN, 0f, transform.position.z);
         }
 
         // Vertical constrain
         if (transform.position.z < -Camera.main.orthographicSize)
         {
+            if (m_EntityEffects.trail) m_EntityEffects.trail.Clear();
             transform.position = new Vector3(transform.position.x, 0f, Camera.main.orthographicSize - BORDER_MARGIN);
         }
         else if (transform.position.z > Camera.main.orthographicSize)
         {
+            if (m_EntityEffects.trail) m_EntityEffects.trail.Clear();
             transform.position = new Vector3(transform.position.x, 0f, -Camera.main.orthographicSize + BORDER_MARGIN);
         }
     }
