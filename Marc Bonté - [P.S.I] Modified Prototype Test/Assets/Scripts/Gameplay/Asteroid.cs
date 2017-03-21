@@ -21,12 +21,6 @@ public class Asteroid : Entity
     [SerializeField]
     protected AsteroidParameters m_AsteroidParameters;
 
-    [Header("Graphics"), SerializeField]
-    private MeshRenderer m_Graphics;
-
-    [Header("Collider"), SerializeField]
-    private BoxCollider m_BoxCollider;
-
     public AsteroidType AsteroidType { get; set; }
 
     protected override void Awake()
@@ -77,8 +71,8 @@ public class Asteroid : Entity
 
     private IEnumerator DestroyAsteroid(Vector3 particlePosition)
     {
-        m_BoxCollider.enabled = false;
-        m_Graphics.enabled = false;
+        m_EntityParameters.ownCollider.enabled = false;
+        m_EntityParameters.ownMesh.enabled = false;
 
         // VFX
         m_EntityEffects.explosionVFX.transform.position = particlePosition;

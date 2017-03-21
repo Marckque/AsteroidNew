@@ -3,6 +3,13 @@
 [System.Serializable]
 public class EntityParameters
 {
+    [Header("Collider")]
+    public Collider ownCollider; // "own" added just to avoid any conflict with the name "collider"
+
+    [Header("Graphics")]
+    public MeshRenderer ownMesh; // "own" added just to avoid any conflict with the name "mesh"
+
+    [Header("Velocity")]
     public float accelerationScalar = 1f;
     public float maxVelocityMagnitude = 1f;
 }

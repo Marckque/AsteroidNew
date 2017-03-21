@@ -37,36 +37,29 @@ public class Spaceship : Entity
 
     #region Variables
     [SerializeField]
-    private SpaceshipControls m_Controls = new SpaceshipControls();
+    private SpaceshipControls m_Controls;
     [SerializeField]
-    private SpaceshipParameters m_SpaceshipParameters = new SpaceshipParameters();
+    private SpaceshipParameters m_SpaceshipParameters;
     [SerializeField]
-    private SpaceshipEffects m_SpaceshipEffects = new SpaceshipEffects();
-
+    private SpaceshipEffects m_SpaceshipEffects;
     [SerializeField]
     private Bullet m_Bullet;
 
-    private Transform m_Graphics;
-    private float m_RotationInput;
-    private Vector3 m_TargetRotation;
     private float m_DefaultDrag;
     private float m_IdleDrag;
     private float m_LastShootTime;
+    private float m_RotationInput;
+    private Vector3 m_TargetRotation;
 
     private int m_BulletSoundIndex;
 
-    private CapsuleCollider m_CapsuleCollider;
-
-    private bool m_IsAlive = true;
-    public bool IsUsingForwardInput { get; set; }
-    public bool IsInvincible { get; set; }
+    private bool m_IsAlive = true; // Used to deactivate controls at some point
+    public bool IsInvincible { get; set; } // Use to avoid getting chain killed by asteroids
+    public bool IsUsingForwardInput { get; set; } // Allows other classes to know if the spaceship is moving
     #endregion Variables
 
     protected void Start()
     {
-        m_Graphics = transform.GetChild(0);
-        m_CapsuleCollider = GetComponent<CapsuleCollider>();
-
         m_DefaultDrag = m_EntityRigidbody.drag;
         m_IdleDrag = m_DefaultDrag * m_SpaceshipParameters.maxMagnitudeMultiplier;
     }
@@ -121,7 +114,7 @@ public class Spaceship : Entity
     {
         if (Input.GetKeyDown(KeyCode.Space) && m_LastShootTime + m_SpaceshipParameters.shootCooldown < Time.time)
         {
-            m_LastShootTime = Time.time;
+            m_LastShootTime = Time.time; // Start cooldown
             Bullet bullet = Instantiate(m_Bullet, transform.position + (transform.forward * m_SpaceshipParameters.shootOffset), Quaternion.identity);
 
             // SFX
@@ -213,15 +206,15 @@ public class Spaceship : Entity
     private IEnumerator RespawnDelay(Vector3 respawnPosition)
     {
         m_IsAlive = false;
-        m_CapsuleCollider.enabled = false;
-        m_Graphics.gameObject.SetActive(false);
+        m_EntityParameters.ownCollider.enabled = false;
+        m_EntityParameters.ownMesh.enabled = false;
 
         yield return new WaitForSeconds(m_SpaceshipParameters.respawnTime);
 
         transform.position = respawnPosition;
 
-        m_Graphics.gameObject.SetActive(true);
-        m_CapsuleCollider.enabled = true;
+        m_EntityParameters.ownCollider.enabled = true;
+        m_EntityParameters.ownMesh.enabled = true;
         m_IsAlive = true;
 
         StartCoroutine(TemporaryInvincibility());
@@ -234,13 +227,13 @@ public class Spaceship : Entity
 
         while (elapsedTime < m_SpaceshipParameters.invincibilityDuration)
         {
-            if (m_Graphics.gameObject.activeInHierarchy)
+            if (m_EntityParameters.ownMesh.enabled)
             {
-                m_Graphics.gameObject.SetActive(false);
+                m_EntityParameters.ownMesh.enabled = false;
             }
             else
             {
-                m_Graphics.gameObject.SetActive(true);
+                m_EntityParameters.ownMesh.enabled = true;
             }
 
             elapsedTime += Time.deltaTime * BLINK_DURATION;
@@ -248,7 +241,7 @@ public class Spaceship : Entity
             yield return new WaitForSeconds(Time.deltaTime * BLINK_DURATION);
         }
 
-        m_Graphics.gameObject.SetActive(true);
+        m_EntityParameters.ownMesh.enabled = true;
         IsInvincible = false;
     }
 
