@@ -25,8 +25,8 @@ public class SpaceshipParameters
 [System.Serializable]
 public class SpaceshipEffects
 {
-    [Header("VFX")]
-    public ParticleSystem destroyedVFX;
+    [Header("SFX")]
+    public AudioClip[] bulletSounds;
 }
 
 public class Spaceship : Entity
@@ -52,6 +52,8 @@ public class Spaceship : Entity
     private float m_DefaultDrag;
     private float m_IdleDrag;
     private float m_LastShootTime;
+
+    private int m_BulletSoundIndex;
 
     private CapsuleCollider m_CapsuleCollider;
 
@@ -122,6 +124,19 @@ public class Spaceship : Entity
             m_LastShootTime = Time.time;
             Bullet bullet = Instantiate(m_Bullet, transform.position + (transform.forward * m_SpaceshipParameters.shootOffset), Quaternion.identity);
 
+            // SFX
+            bullet.AccessToAudioSource().clip = m_SpaceshipEffects.bulletSounds[m_BulletSoundIndex];
+            bullet.AccessToAudioSource().Play();
+            if (m_BulletSoundIndex < m_SpaceshipEffects.bulletSounds.Length - 1)
+            {
+                m_BulletSoundIndex++;
+            }
+            else
+            {
+                m_BulletSoundIndex = 0;
+            }
+
+            // Bullet physics
             bullet.SetAcceleration(transform.forward * bullet.EntityParameters.accelerationScalar);
             bullet.ApplyForces(false);
         }
@@ -141,13 +156,21 @@ public class Spaceship : Entity
         }
     }
 
+    // Call this when spaceship gets destroyed
     public void ResetSpaceship()
     {
-        m_SpaceshipEffects.destroyedVFX.transform.position = transform.position;
-        m_SpaceshipEffects.destroyedVFX.Play();
+        // VFX
+        m_EntityEffects.explosionVFX.transform.position = transform.position;
+        m_EntityEffects.explosionVFX.Play();
 
+        // SFX
+        m_EntityEffects.audioSource.clip = m_EntityEffects.explosionSFX;
+        m_EntityEffects.audioSource.Play();
+
+        // Velocity
         m_EntityRigidbody.velocity = Vector3.zero;
 
+        // Position
         Vector3 respawnPosition = Vector3.zero;
         float distanceToSpaceship = 0f;
         int numOfIteration = 0;

@@ -6,10 +6,14 @@ public class Bullet : Entity
     private float m_LifeTime;
     private float m_SpawnTime;
 
+    [SerializeField]
+    private AudioSource m_AudioSource;
+
     protected override void Awake()
     {
         base.Awake();
 
+        m_AudioSource = GetComponent<AudioSource>();
         m_SpawnTime = Time.time;
     }
 
@@ -21,5 +25,10 @@ public class Bullet : Entity
         {
             Destroy(gameObject);
         }
+    }
+
+    public AudioSource AccessToAudioSource()
+    {
+        return m_AudioSource;
     }
 }

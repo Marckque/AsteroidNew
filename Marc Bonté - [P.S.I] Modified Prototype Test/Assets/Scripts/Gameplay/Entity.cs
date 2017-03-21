@@ -10,7 +10,13 @@ public class EntityParameters
 [System.Serializable]
 public class EntityEffects
 {
+    [Header("VFX")]
     public TrailRenderer trail;
+    public ParticleSystem explosionVFX;
+
+    [Header("SFX")]
+    public AudioSource audioSource;
+    public AudioClip explosionSFX;
 }
 
 [RequireComponent(typeof(Rigidbody))]

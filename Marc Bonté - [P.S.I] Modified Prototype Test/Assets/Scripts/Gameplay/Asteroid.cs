@@ -9,17 +9,8 @@ public enum AsteroidType
     big = 2
 };
 
-[System.Serializable]
-public class AsteroidEffects
-{
-    [Header("VFX")]
-    public ParticleSystem m_DestroyedVFX;
-}
-
 public class Asteroid : Entity
 {
-    [SerializeField]
-    private AsteroidEffects m_AsteroidEffects;
     [SerializeField, Range(0f, 1f)]
     protected float m_AccelerationMultiplier = 1f;
     [SerializeField]
@@ -105,8 +96,13 @@ public class Asteroid : Entity
         m_BoxCollider.enabled = false;
         m_Graphics.gameObject.SetActive(false);
 
-        m_AsteroidEffects.m_DestroyedVFX.transform.position = particlePosition;
-        m_AsteroidEffects.m_DestroyedVFX.Play();
+        // VFX
+        m_EntityEffects.explosionVFX.transform.position = particlePosition;
+        m_EntityEffects.explosionVFX.Play();
+
+        // SFX
+        m_EntityEffects.audioSource.clip = m_EntityEffects.explosionSFX;
+        m_EntityEffects.audioSource.Play();
 
         yield return new WaitForSeconds(1f);
 
