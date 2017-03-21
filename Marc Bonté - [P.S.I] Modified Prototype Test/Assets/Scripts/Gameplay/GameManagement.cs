@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 [System.Serializable]
 public class GameParameters
@@ -16,6 +17,9 @@ public class GameParameters
     public int maximumAsteroids = 1;
     public int numberOfAsteroidsToSpawn = 3;
     public float delayBetweenSpawn = 2f;
+
+    [Header("UI")]
+    public UIManager managerUI;
 }
 
 [RequireComponent(typeof(ScoreManager))]
@@ -69,6 +73,14 @@ public class GameManagement : MonoBehaviour
         m_ScoreManager = GetComponent<ScoreManager>();
     }
     #endregion Initialisers
+
+    protected void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            SceneManager.LoadScene(0);
+        }
+    }
 
     private IEnumerator PeriodicAsteroidSpawn()
     {

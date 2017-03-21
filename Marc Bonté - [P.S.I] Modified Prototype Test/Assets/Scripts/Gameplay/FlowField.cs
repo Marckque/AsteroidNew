@@ -36,7 +36,16 @@ public class FlowField : MonoBehaviour
 
         if (Direction != Vector3.zero)
         {
+            if (!m_ArrowGraphics.gameObject.activeInHierarchy)
+            {
+                m_ArrowGraphics.gameObject.SetActive(true);
+            }
+
             m_ArrowGraphics.transform.forward = Direction;
+        }
+        else
+        {
+            m_ArrowGraphics.gameObject.SetActive(false);
         }
     }
 
