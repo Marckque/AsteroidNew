@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class FlowField : MonoBehaviour
 {
+    [SerializeField]
+    private Transform m_ArrowGraphics;
+
     private const float SPACESHIP_IS_USING_FORWARD_INPUT_MULTIPLIER = 0.25f;
 
     private float m_MultiplierSpaceship;
@@ -29,6 +32,11 @@ public class FlowField : MonoBehaviour
             {
                 Direction = new Vector3(Mathf.Cos(Time.time), 0f, Mathf.Sin(Time.time));
             }
+        }
+
+        if (Direction != Vector3.zero)
+        {
+            m_ArrowGraphics.transform.forward = Direction;
         }
     }
 

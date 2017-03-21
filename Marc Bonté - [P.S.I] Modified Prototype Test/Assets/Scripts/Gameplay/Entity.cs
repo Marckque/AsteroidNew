@@ -19,15 +19,17 @@ public class Entity : MonoBehaviour
     [SerializeField]
     protected EntityParameters m_EntityParameters = new EntityParameters();
     public EntityParameters EntityParameters { get { return m_EntityParameters; } }
-
     [SerializeField]
     protected EntityEffects m_EntityEffects = new EntityEffects();
+    public EntityEffects EntityEffects { get { return m_EntityEffects; } }
+    protected Rigidbody m_EntityRigidbody;
+    public Rigidbody EntityRigidbody { get { return m_EntityRigidbody; } }
+
 
     private const float BORDER_MARGIN = 0.5f;
 
     protected Vector3 m_Acceleration;
-    protected Rigidbody m_EntityRigidbody;
-    public Rigidbody EntityRigidbody { get { return m_EntityRigidbody; } }
+    
 
     protected virtual void Awake()
     {
@@ -55,24 +57,24 @@ public class Entity : MonoBehaviour
         // Horizontal constrain
         if (transform.position.x < -Camera.main.orthographicSize)
         {
-            if (m_EntityEffects.trail) m_EntityEffects.trail.Clear();
+            if (EntityEffects.trail) EntityEffects.trail.Clear();
             transform.position = new Vector3(Camera.main.orthographicSize - BORDER_MARGIN, 0f, transform.position.z);
         }
         else if (transform.position.x > Camera.main.orthographicSize)
         {
-            if (m_EntityEffects.trail) m_EntityEffects.trail.Clear();
+            if (EntityEffects.trail) EntityEffects.trail.Clear();
             transform.position = new Vector3(-Camera.main.orthographicSize + BORDER_MARGIN, 0f, transform.position.z);
         }
 
         // Vertical constrain
         if (transform.position.z < -Camera.main.orthographicSize)
         {
-            if (m_EntityEffects.trail) m_EntityEffects.trail.Clear();
+            if (EntityEffects.trail) EntityEffects.trail.Clear();
             transform.position = new Vector3(transform.position.x, 0f, Camera.main.orthographicSize - BORDER_MARGIN);
         }
         else if (transform.position.z > Camera.main.orthographicSize)
         {
-            if (m_EntityEffects.trail) m_EntityEffects.trail.Clear();
+            if (EntityEffects.trail) EntityEffects.trail.Clear();
             transform.position = new Vector3(transform.position.x, 0f, -Camera.main.orthographicSize + BORDER_MARGIN);
         }
     }

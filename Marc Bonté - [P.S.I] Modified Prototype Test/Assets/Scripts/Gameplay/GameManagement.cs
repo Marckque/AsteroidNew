@@ -9,14 +9,13 @@ public class GameParameters
     public Spaceship spaceship;
 
     [Header("Asteroids")]
+    public Transform asteroidSpawnParent;
     public Asteroid smallAsteroid;
     public Asteroid mediumAsteroid;
     public Asteroid bigAsteroid;
     public int maximumAsteroids = 1;
     public int numberOfAsteroidsToSpawn = 3;
     public float delayBetweenSpawn = 2f;
-    public int minimumAsteroidSize = 1;
-    public int maximumAsteroidSize = 3;
 }
 
 [RequireComponent(typeof(ScoreManager))]
@@ -119,6 +118,7 @@ public class GameManagement : MonoBehaviour
         }
 
         Asteroid asteroid = Instantiate(asteroidToSpawn, spawnPosition, Quaternion.identity);
+        asteroid.transform.SetParent(m_GameParameters.asteroidSpawnParent);
         asteroid.SetAcceleration(direction * asteroid.EntityParameters.accelerationScalar);
         asteroid.ApplyForces(false);
 

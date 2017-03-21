@@ -3,9 +3,10 @@
 [System.Serializable]
 public class FlowFieldsParameters
 {
-    [Header("Flow fields"), HideInInspector]
+    [Header("Flow fields")]
+    public Transform flowFieldContainer;
+    [HideInInspector]
     public FlowField[] flowFields;
-
     [Range(0f, 3f)]
     public float spaceshipMultiplier = 1f;
     [Range(0f, 3f)]
@@ -56,6 +57,19 @@ public class FlowFieldManager : MonoBehaviour
         InitialiseFlowFields();
         IsTargetActivated();
         CheckPreset();
+    }
+
+    // Add all functions that will initialise the parameters that can manually be set on flow fields
+    private void InitialiseFlowFields()
+    {
+        m_FlowFieldsParameters.flowFields = new FlowField[m_FlowFieldsParameters.flowFieldContainer.childCount];
+
+        for (int i = 0; i < m_FlowFieldsParameters.flowFieldContainer.childCount; i++)
+        {
+            m_FlowFieldsParameters.flowFields[i] = m_FlowFieldsParameters.flowFieldContainer.GetChild(i).GetComponent<FlowField>();
+        }
+
+        InitialiseFlowFieldsForceMultiplier();
     }
 
     private void IsTargetActivated()
@@ -224,18 +238,6 @@ public class FlowFieldManager : MonoBehaviour
         }
     }
 
-    // Add all functions that will initialise the parameters that can manually be set on flow fields
-    private void InitialiseFlowFields()
-    {
-        m_FlowFieldsParameters.flowFields = new FlowField[transform.childCount];
-
-        for (int i = 0; i < transform.childCount; i++)
-        {
-            m_FlowFieldsParameters.flowFields[i] = transform.GetChild(i).GetComponent<FlowField>();
-        }
-
-        InitialiseFlowFieldsForceMultiplier();
-    }
 
     // Functions to set values (force, direction, etc...) on flow fields
     private void InitialiseFlowFieldsForceMultiplier()

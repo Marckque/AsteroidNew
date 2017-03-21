@@ -26,7 +26,6 @@ public class SpaceshipEffects
 {
     [Header("VFX")]
     public ParticleSystem destroyedVFX;
-    public TrailRenderer trail;
 }
 
 public class Spaceship : Entity
@@ -54,6 +53,7 @@ public class Spaceship : Entity
 
     private CapsuleCollider m_CapsuleCollider;
 
+    private bool m_IsAlive = true;
     public bool IsUsingForwardInput { get; set; }
     public bool IsInvincible { get; set; }
     #endregion Variables
@@ -71,11 +71,14 @@ public class Spaceship : Entity
     {
         base.Update();
 
-        MoveInput();
-        m_RotationInput = Input.GetAxisRaw(m_Controls.rotation);
+        if (m_IsAlive)
+        {
+            MoveInput();
+            m_RotationInput = Input.GetAxisRaw(m_Controls.rotation);
 
-        Teleport();
-        Shoot();
+            Teleport();
+            Shoot();
+        }
     }
 
     protected override void FixedUpdate()
@@ -102,15 +105,11 @@ public class Spaceship : Entity
             m_EntityRigidbody.drag = m_DefaultDrag;
             IsUsingForwardInput = true;
             SetAcceleration(transform.InverseTransformDirection(transform.forward));
-
-            m_SpaceshipEffects.trail.enabled = true;
         }
         else
         {
             m_EntityRigidbody.drag = m_IdleDrag;
             IsUsingForwardInput = false;
-
-            m_SpaceshipEffects.trail.enabled = false;
         }
     }
 
@@ -187,6 +186,7 @@ public class Spaceship : Entity
 
     private IEnumerator RespawnDelay(Vector3 respawnPosition)
     {
+        m_IsAlive = false;
         m_CapsuleCollider.enabled = false;
         m_Graphics.gameObject.SetActive(false);
 
@@ -196,6 +196,7 @@ public class Spaceship : Entity
 
         m_Graphics.gameObject.SetActive(true);
         m_CapsuleCollider.enabled = true;
+        m_IsAlive = true;
 
         StartCoroutine(TemporaryInvincibility());
     }
