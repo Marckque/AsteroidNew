@@ -160,6 +160,7 @@ public class FlowFieldManager : MonoBehaviour
             case FlowFieldPreset.towardsCenter:
                 for (int i = 0; i < m_FlowFieldsParameters.flowFields.Length; i++)
                 {
+                    m_FlowFieldsParameters.flowFields[i].SetRotation(false, false);
                     m_FlowFieldsParameters.flowFields[i].Direction = (Vector3.zero - m_FlowFieldsParameters.flowFields[i].transform.position).normalized;
                 }
                 break;
@@ -167,6 +168,7 @@ public class FlowFieldManager : MonoBehaviour
             case FlowFieldPreset.awayFromCenter:
                 for (int i = 0; i < m_FlowFieldsParameters.flowFields.Length; i++)
                 {
+                    m_FlowFieldsParameters.flowFields[i].SetRotation(false, false);
                     m_FlowFieldsParameters.flowFields[i].Direction = (m_FlowFieldsParameters.flowFields[i].transform.position - Vector3.zero).normalized;
                 }
                 break;
