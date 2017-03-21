@@ -76,9 +76,6 @@ public class GameManagement : MonoBehaviour
         {
             if (m_Asteroids.Count < m_GameParameters.maximumAsteroids)
             {
-                //int i = Random.Range(0, 2);
-                //AsteroidType type = i == 0 ? AsteroidType.big : AsteroidType.small;
-
                 // Defines a spawn position that is away from the player
                 Vector3 spawnPosition = Vector3.zero;
                 float distanceToSpaceship = 0f;
