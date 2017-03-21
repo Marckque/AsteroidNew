@@ -10,6 +10,13 @@ public class DuplicatingAsteroid : Asteroid
     [SerializeField, Range(-1f, 1f), Tooltip("Close to -1: away from player ; close to 1: close to random direction")]
     private float m_DuplicationDotOffset = -0.8f;
 
+
+    [SerializeField, Range(1f, 5f)]
+    private float m_MinimimDestroyVelocityMultiplier = 2f;
+    [SerializeField, Range(1f, 10f)]
+    private float m_MaximumDestroyVelocityMultiplier = 4f;
+    private float m_DestroyVelocityMultiplier = 1f;
+
     protected override void Awake()
     {
         base.Awake();
@@ -33,9 +40,11 @@ public class DuplicatingAsteroid : Asteroid
         {
             case AsteroidType.medium:
                 numberOfAsteroidToSpawn = 2;
+                m_DestroyVelocityMultiplier = m_MaximumDestroyVelocityMultiplier;
                 break;
             case AsteroidType.big:
                 numberOfAsteroidToSpawn = 1;
+                m_DestroyVelocityMultiplier = m_MinimimDestroyVelocityMultiplier;
                 break;
         }
 
@@ -54,11 +63,11 @@ public class DuplicatingAsteroid : Asteroid
                     randomDirection = Vector3.zero;
                 }
 
-                GameManagement.Instance.SpawnAsteroid(m_AsteroidToSpawn, transform.position, direction + randomDirection);
+                GameManagement.Instance.SpawnAsteroid(m_AsteroidToSpawn, transform.position, direction + randomDirection * m_DestroyVelocityMultiplier);
             }
             else
             {
-                GameManagement.Instance.SpawnAsteroid(m_AsteroidToSpawn, transform.position, randomDirection);
+                GameManagement.Instance.SpawnAsteroid(m_AsteroidToSpawn, transform.position, randomDirection * m_DestroyVelocityMultiplier);
             }
         }
     }

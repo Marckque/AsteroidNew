@@ -64,11 +64,6 @@ public class Asteroid : Entity
             {
                 spaceShip.ResetSpaceship();
             }
-            else
-            {
-                OnCollisionWithKilling(ExtensionMethods.RandomVector3());
-            }
-
             return;
         }
 

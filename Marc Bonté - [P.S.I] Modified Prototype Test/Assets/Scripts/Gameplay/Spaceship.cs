@@ -19,6 +19,7 @@ public class SpaceshipParameters
     public float shootOffset = 1f;
     public float respawnTime = 1f;
     public float invincibilityDuration = 1f;
+    public float shootCooldown = 0.1f;
 }
 
 [System.Serializable]
@@ -50,6 +51,7 @@ public class Spaceship : Entity
     private Vector3 m_TargetRotation;
     private float m_DefaultDrag;
     private float m_IdleDrag;
+    private float m_LastShootTime;
 
     private CapsuleCollider m_CapsuleCollider;
 
@@ -115,8 +117,9 @@ public class Spaceship : Entity
 
     private void Shoot()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && m_LastShootTime + m_SpaceshipParameters.shootCooldown < Time.time)
         {
+            m_LastShootTime = Time.time;
             Bullet bullet = Instantiate(m_Bullet, transform.position + (transform.forward * m_SpaceshipParameters.shootOffset), Quaternion.identity);
 
             bullet.SetAcceleration(transform.forward * bullet.EntityParameters.accelerationScalar);
