@@ -4,6 +4,7 @@ public class FlowField : MonoBehaviour
 {
     private const float SPACESHIP_IS_USING_FORWARD_INPUT_MULTIPLIER = 0.25f;
 
+    #region Variables
     [SerializeField]
     private Transform m_ArrowGraphics;
 
@@ -17,6 +18,7 @@ public class FlowField : MonoBehaviour
     // If direction keeps on rotating
     private bool m_IsRotating;
     private bool m_Clockwise;
+    #endregion Variables
 
     protected void Update()
     {

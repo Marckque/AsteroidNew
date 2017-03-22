@@ -20,6 +20,7 @@ public class GameParameters
 
     [Range(1f, 3f)]
     public float minimumSpawnDelay = 1.5f;
+
     [Tooltip("0 → the spawn rate will be constant ; X → Will decrease by X the time between each asteroid spawn ; Fastest spawn rate is set to minimumSpawnDelay")]
     public float decreaseDelayBetweenSpawnsByAmount = 0f;
 

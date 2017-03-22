@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[System.Serializable] // !!! USE THESE CONTROLS !!!
+[System.Serializable] 
 public class SpaceshipControls
 {
     public string rotation = "Horizontal";
