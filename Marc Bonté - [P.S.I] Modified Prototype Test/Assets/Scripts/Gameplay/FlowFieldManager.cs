@@ -22,45 +22,39 @@ public class FlowFieldsParameters
     public float smallAsteroidMultiplier = 1f;
 }
 
-[System.Serializable]
-public class FlowFieldsTarget
-{
-    [Header("Target parameters")]
-    public Transform flowFieldsTarget;
-
-    [Tooltip("If this variable is false, all booleans below will be false")]
-    public bool useTarget;
-
-    public bool updateDirectionInRealTime;
-}
-
 public enum FlowFieldPreset
 {
     none,
     random,
     gravity,
+    asteroid,
     alternative,
+    alternativeAsteroid,
     clockwise,
     counterClockwise,
     towardsCenter,
     awayFromCenter,
+    targetTarget,
+    awayFromTarget,
     wave,
-    wave2
 };
 
 public class FlowFieldManager : MonoBehaviour
 {
+    #region Variables
     [SerializeField]
     private FlowFieldsParameters m_FlowFieldsParameters = new FlowFieldsParameters();
     [SerializeField]
-    private FlowFieldsTarget m_FlowFieldsTarget = new FlowFieldsTarget();
-    [SerializeField]
     private FlowFieldPreset m_CurrentPreset;
+    [SerializeField]
+    private Transform m_Target;
+    private bool m_UpdateDirectionInRealTime;
+    #endregion Variables
 
+    #region Initialisers
     protected void Awake()
     {
         InitialiseFlowFields();
-        IsTargetActivated();
         CheckPreset();
     }
 
@@ -77,17 +71,28 @@ public class FlowFieldManager : MonoBehaviour
         InitialiseFlowFieldsForceMultiplier();
     }
 
-    private void IsTargetActivated()
+    // Functions to set values (force, direction, etc...) on flow fields
+    private void InitialiseFlowFieldsForceMultiplier()
     {
-        // Deactivate all other variables if "m_UseTarget" is false
-        if (!m_FlowFieldsTarget.useTarget)
+        foreach (FlowField flowField in m_FlowFieldsParameters.flowFields)
         {
-            m_FlowFieldsTarget.updateDirectionInRealTime = false;
+            flowField.SetForceMultiplier(m_FlowFieldsParameters.spaceshipMultiplier, m_FlowFieldsParameters.bigAsteroidMultiplier,
+                                        m_FlowFieldsParameters.mediumAsteroidMultiplier, m_FlowFieldsParameters.smallAsteroidMultiplier);
         }
-        else
+    }
+    #endregion Initialisers
+
+    protected void Update()
+    {
+        if (m_UpdateDirectionInRealTime)
         {
-            m_CurrentPreset = FlowFieldPreset.none;
+            CheckPreset();
         }
+    }
+
+    protected void OnValidate()
+    {
+        CheckPreset();
     }
 
     private void CheckPreset()
@@ -96,6 +101,7 @@ public class FlowFieldManager : MonoBehaviour
         {
             // Flow fields have a direction of zero
             case FlowFieldPreset.none:
+                m_UpdateDirectionInRealTime = false;
                 for (int i = 0; i < m_FlowFieldsParameters.flowFields.Length; i++)
                 {
                     m_FlowFieldsParameters.flowFields[i].SetRotation(false, false);
@@ -105,6 +111,7 @@ public class FlowFieldManager : MonoBehaviour
 
             // It makes the flow fields' direction random
             case FlowFieldPreset.random:
+                m_UpdateDirectionInRealTime = false;
                 for (int i = 0; i < m_FlowFieldsParameters.flowFields.Length; i++)
                 {
                     m_FlowFieldsParameters.flowFields[i].SetRotation(false, false);
@@ -114,6 +121,7 @@ public class FlowFieldManager : MonoBehaviour
 
             // Makes the flow fields go down
             case FlowFieldPreset.gravity:
+                m_UpdateDirectionInRealTime = false;
                 for (int i = 0; i < m_FlowFieldsParameters.flowFields.Length; i++)
                 {
                     m_FlowFieldsParameters.flowFields[i].SetRotation(false, false);
@@ -121,8 +129,38 @@ public class FlowFieldManager : MonoBehaviour
                 }
                 break;
 
+
+            // Targets the first asteroid of the GameManagement "CurrentAstereoid" list
+            case FlowFieldPreset.asteroid:
+                m_UpdateDirectionInRealTime = true;
+                for (int i = 0; i < m_FlowFieldsParameters.flowFields.Length; i++)
+                {
+                    m_FlowFieldsParameters.flowFields[i].SetRotation(false, false);
+                    m_FlowFieldsParameters.flowFields[i].Direction = (m_Target.transform.position - GameManagement.Instance.CurrentAsteroids[0].transform.position).normalized;
+                }
+                break;
+
+            // Targets an asteroid. One out of two flow fields will point towards it while the other will point away from it.
+            case FlowFieldPreset.alternativeAsteroid:
+                m_UpdateDirectionInRealTime = true;
+                for (int i = 0; i < m_FlowFieldsParameters.flowFields.Length; i++)
+                {
+                    m_FlowFieldsParameters.flowFields[i].SetRotation(false, false);
+
+                    if (i % 2 == 0)
+                    {
+                        m_FlowFieldsParameters.flowFields[i].Direction = (m_Target.transform.position - GameManagement.Instance.CurrentAsteroids[0].transform.position).normalized;
+                    }
+                    else
+                    {
+                        m_FlowFieldsParameters.flowFields[i].Direction = (GameManagement.Instance.CurrentAsteroids[0].transform.position - m_Target.transform.position).normalized;
+                    }
+                }
+                break;
+
             // Defines a random direction and alternates between flow fields with this direction and its opposite
             case FlowFieldPreset.alternative:
+                m_UpdateDirectionInRealTime = false;
                 Vector3 randomDirection = ExtensionMethods.RandomVector3();
 
                 for (int i = 0; i < m_FlowFieldsParameters.flowFields.Length; i++)
@@ -145,6 +183,7 @@ public class FlowFieldManager : MonoBehaviour
 
             // Adds clockwise rotation to all direction of flow fields (all direction are pointing in the same direction)
             case FlowFieldPreset.clockwise:
+                m_UpdateDirectionInRealTime = false;
                 for (int i = 0; i < m_FlowFieldsParameters.flowFields.Length; i++)
                 {
                     randomDirection = Vector3.forward;
@@ -154,14 +193,17 @@ public class FlowFieldManager : MonoBehaviour
 
             // Adds counter clockwise rotation to all direction of flow fields (all direction are pointing in the same direction)
             case FlowFieldPreset.counterClockwise:
+                m_UpdateDirectionInRealTime = false;
                 for (int i = 0; i < m_FlowFieldsParameters.flowFields.Length; i++)
                 {
                     randomDirection = Vector3.forward;
                     m_FlowFieldsParameters.flowFields[i].SetRotation(true, false);
                 }
                 break;
-
+            
+            // Goes towards the center of the screen
             case FlowFieldPreset.towardsCenter:
+                m_UpdateDirectionInRealTime = false;
                 for (int i = 0; i < m_FlowFieldsParameters.flowFields.Length; i++)
                 {
                     m_FlowFieldsParameters.flowFields[i].SetRotation(false, false);
@@ -169,7 +211,9 @@ public class FlowFieldManager : MonoBehaviour
                 }
                 break;
 
+            // Goes away from the center of the screen
             case FlowFieldPreset.awayFromCenter:
+                m_UpdateDirectionInRealTime = false;
                 for (int i = 0; i < m_FlowFieldsParameters.flowFields.Length; i++)
                 {
                     m_FlowFieldsParameters.flowFields[i].SetRotation(false, false);
@@ -177,98 +221,76 @@ public class FlowFieldManager : MonoBehaviour
                 }
                 break;
 
-        case FlowFieldPreset.wave:
-            float a = 0;
-            Vector2 v = Vector2.zero;
-
-            float xOff = 0f;
-            float yOff = 0f;
-                int dd = 0;
-                float aaa = 0.03f;
-
-            for (int i = 0; i < m_FlowFieldsParameters.flowFields.Length; i++)
-            {
-                    if (dd > 10)
-                    {
-                        dd = 0;
-                        xOff += aaa;
-                    }
-
-                    dd++;
-                    a = ExtensionMethods.Remap(Mathf.PerlinNoise(xOff, yOff), 0f, 1f, 0f, Mathf.PI * 2f);
-                    v = new Vector2(Mathf.Cos(a), Mathf.Sin(a));
-                    m_FlowFieldsParameters.flowFields[i].Direction = new Vector3(v.x, 0f, v.y);
-
-                    yOff += aaa;
+            // Targets a transform and follows it
+            case FlowFieldPreset.targetTarget:
+                m_UpdateDirectionInRealTime = true;
+                for (int i = 0; i < m_FlowFieldsParameters.flowFields.Length; i++)
+                {
+                    m_FlowFieldsParameters.flowFields[i].SetRotation(false, false);
+                    m_FlowFieldsParameters.flowFields[i].Direction = (m_Target.transform.position - m_FlowFieldsParameters.flowFields[i].transform.position).normalized;
                 }
-            break;
+                break;
 
-            /*
+            // Selects a transform and goes away from it
+            case FlowFieldPreset.awayFromTarget:
+                m_UpdateDirectionInRealTime = true;
+                for (int i = 0; i < m_FlowFieldsParameters.flowFields.Length; i++)
+                {
+                    m_FlowFieldsParameters.flowFields[i].SetRotation(false, false);
+                    m_FlowFieldsParameters.flowFields[i].Direction = (m_FlowFieldsParameters.flowFields[i].transform.position - m_Target.transform.position).normalized;
+                }
+                break;
+
+            // Everytime a new wave. Would work better with a larger scale. It works, but it is hard to see the wave form yet... !
             case FlowFieldPreset.wave:
-                test = new Vector3[10, 10];    
-                for (int k = 0; k < m_FlowFieldsParameters.flowFields.Length; k++)
+                m_UpdateDirectionInRealTime = false;
+
+                float noise = 0;
+                Vector2 newDirection = Vector2.zero;
+
+                float xOffset = 0f;
+                float yOffset = 0f;
+
+                int counter = 0;
+                int maxCount = Random.Range(1, 11);
+                bool alterate = true;
+
+                float increment = Random.Range(0.01f, 0.09f);
+                float bonus = Random.Range(1f, 10f);
+                float angle = Random.Range(1f, 10f);                
+
+                for (int i = 0; i < m_FlowFieldsParameters.flowFields.Length; i++)
                 {
-                    float xOffset = 0f;
-                    for (int i = 0; i < 10; i++)
+                    m_FlowFieldsParameters.flowFields[i].SetRotation(false, false);
+
+                    if (counter > maxCount)
                     {
-                        float yOffset = 0f;
-                        for (int j = 0; j < 10; j++)
+                        if (alterate)
                         {
-                            float theta = ExtensionMethods.Remap(Mathf.PerlinNoise(xOffset, yOffset), 0f, 1f, 0f, Mathf.PI * 2f);
-                            test[i, j] = new Vector3(Mathf.Cos(theta), 0f, Mathf.Sin(theta));
-                            m_FlowFieldsParameters.flowFields[k].Direction = test[i, j];
-                            yOffset += 1f;
+                            alterate = false;
+                            xOffset += increment * bonus;
                         }
-                        xOffset += 1f;
+                        else
+                        {
+                            alterate = true;
+                        }
+
+                        counter = 0;
+                        xOffset += increment;
                     }
-                }
-                break;
 
-            case FlowFieldPreset.wave2:
-                float noise;
-                for (int i = 0; i < 99; i++)
-                {
-                    noise = Mathf.PerlinNoise(Random.Range(-20, 20), Random.Range(-20, 20));
-                    m_FlowFieldsParameters.flowFields[i].Direction = new Vector3(Mathf.Sin(noise), 0f, Mathf.Cos(noise)).normalized;
-                }
+                    counter++;
+                    noise = ExtensionMethods.Remap(Mathf.PerlinNoise(xOffset, yOffset), 0f, 1f, 0f, Mathf.PI * angle);
+                    newDirection = new Vector2(Mathf.Sin(noise), Mathf.Cos(noise));
+                    m_FlowFieldsParameters.flowFields[i].Direction = new Vector3(newDirection.x, 0f, newDirection.y);
 
-                break;
-            */
+                    yOffset += increment;
+                }
+                break;      
 
             // It makes flow fields' direction to be Vector.zero;
             default:
                 break;
         }
-    }
-
-    // Functions to set values (force, direction, etc...) on flow fields
-    private void InitialiseFlowFieldsForceMultiplier()
-    {
-        foreach (FlowField flowField in m_FlowFieldsParameters.flowFields)
-        {
-            flowField.SetForceMultiplier(m_FlowFieldsParameters.spaceshipMultiplier, m_FlowFieldsParameters.bigAsteroidMultiplier,
-                                        m_FlowFieldsParameters.mediumAsteroidMultiplier, m_FlowFieldsParameters.smallAsteroidMultiplier);
-        }
-    }
-
-    private void SetTarget()
-    {
-        foreach (FlowField flowField in m_FlowFieldsParameters.flowFields)
-        {
-            flowField.Direction = (m_FlowFieldsTarget.flowFieldsTarget.position - flowField.transform.position).normalized;
-        }
-    }
-
-    protected void Update()
-    {
-        if (m_FlowFieldsTarget.updateDirectionInRealTime)
-        {
-            SetTarget();
-        }
-    }
-
-    protected void OnValidate()
-    {
-        CheckPreset();
     }
 }
