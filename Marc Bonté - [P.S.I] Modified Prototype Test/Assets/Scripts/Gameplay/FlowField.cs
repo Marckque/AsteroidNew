@@ -20,20 +20,16 @@ public class FlowField : MonoBehaviour
 
     protected void Update()
     {
-        // Rotates the direction
+        UpdateArrowOrientation();
+
         if (m_IsRotating)
         {
-            if (m_Clockwise)
-            {
-                Direction = new Vector3(Mathf.Cos(Time.time), 0f, -Mathf.Sin(Time.time));
-            }
-            else
-            {
-                Direction = new Vector3(Mathf.Cos(Time.time), 0f, Mathf.Sin(Time.time));
-            }
+            RotateDirection();
         }
+    }
 
-        // Manage graphics
+    private void UpdateArrowOrientation()
+    {
         if (Direction != Vector3.zero)
         {
             if (!m_ArrowGraphics.gameObject.activeInHierarchy)
@@ -46,6 +42,18 @@ public class FlowField : MonoBehaviour
         else
         {
             m_ArrowGraphics.gameObject.SetActive(false);
+        }
+    }
+
+    private void RotateDirection()
+    {
+        if (m_Clockwise)
+        {
+            Direction = new Vector3(Mathf.Cos(Time.time), 0f, -Mathf.Sin(Time.time));
+        }
+        else
+        {
+            Direction = new Vector3(Mathf.Cos(Time.time), 0f, Mathf.Sin(Time.time));
         }
     }
 

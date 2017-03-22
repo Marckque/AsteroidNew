@@ -38,10 +38,10 @@ public class Asteroid : Entity
         Bullet bullet = other.GetComponent<Bullet>();
         if (bullet)
         {
+            GameManagement.Instance.RemoveAsteroidFromList(this);
+
             OnCollisionWithKilling(bullet.EntityRigidbody.velocity.normalized);
             Destroy(bullet.gameObject);
-
-            GameManagement.Instance.RemoveAsteroidFromList(this);
 
             return;
         }
