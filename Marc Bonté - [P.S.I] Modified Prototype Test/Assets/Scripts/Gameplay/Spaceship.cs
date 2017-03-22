@@ -70,7 +70,7 @@ public class Spaceship : Entity
 
         if (m_IsAlive)
         {
-            MoveInput();
+            MoveForwardInput();
             m_RotationInput = Input.GetAxisRaw(m_Controls.rotation);
 
             Teleport();
@@ -95,9 +95,9 @@ public class Spaceship : Entity
         }
     }
 
-    private void MoveInput()
+    private void MoveForwardInput()
     {
-        if (Input.GetKey(KeyCode.UpArrow))
+        if (Input.GetButton(m_Controls.moveForward))
         {
             m_EntityRigidbody.drag = m_DefaultDrag;
             IsUsingForwardInput = true;
@@ -112,7 +112,7 @@ public class Spaceship : Entity
 
     private void Shoot()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && m_LastShootTime + m_SpaceshipParameters.shootCooldown < Time.time)
+        if (Input.GetButtonDown(m_Controls.shoot) && m_LastShootTime + m_SpaceshipParameters.shootCooldown < Time.time)
         {
             m_LastShootTime = Time.time; // Start cooldown
             Bullet bullet = Instantiate(m_Bullet, transform.position + (transform.forward * m_SpaceshipParameters.shootOffset), Quaternion.identity);
@@ -137,8 +137,9 @@ public class Spaceship : Entity
 
     private void Teleport()
     {
-        if (Input.GetKeyDown(KeyCode.C))
+        if (Input.GetButtonDown(m_Controls.teleport))
         {
+            DisableGraphicsAndColliders();
             Vector3 newPosition = ExtensionMethods.RandomVector3();
 
             // Makes sure we respawn within the screen with a border offset
@@ -146,6 +147,7 @@ public class Spaceship : Entity
             newPosition.z *= (BORDER_OFFSET + (Camera.main.orthographicSize - BORDER_OFFSET * 2f));
 
             transform.position = newPosition;
+            EnableGraphicsAndColliders();
         }
     }
 
@@ -206,18 +208,12 @@ public class Spaceship : Entity
     private IEnumerator RespawnDelay(Vector3 respawnPosition)
     {
         m_IsAlive = false;
-        m_EntityParameters.ownCollider.enabled = false;
-        m_EntityParameters.ownMesh.enabled = false;
-        m_EntityEffects.trail.enabled = false;
-        m_EntityEffects.trail.Clear();
+        DisableGraphicsAndColliders();
 
         yield return new WaitForSeconds(m_SpaceshipParameters.respawnTime);
 
         transform.position = respawnPosition;
-
-        m_EntityParameters.ownCollider.enabled = true;
-        m_EntityParameters.ownMesh.enabled = true;
-        m_EntityEffects.trail.enabled = true;
+        EnableGraphicsAndColliders();
         m_IsAlive = true;
 
         StartCoroutine(TemporaryInvincibility());
@@ -246,6 +242,41 @@ public class Spaceship : Entity
 
         m_EntityParameters.ownMesh.enabled = true;
         IsInvincible = false;
+    }
+
+    private void EnableGraphicsAndColliders()
+    {
+        EnableGraphics();
+        EnableCollider();
+    }
+
+    private void DisableGraphicsAndColliders()
+    {
+        DisableCollider();
+        DisableGraphics();
+    }
+
+    private void EnableGraphics()
+    {
+        m_EntityParameters.ownMesh.enabled = true;
+        m_EntityEffects.trail.enabled = true;
+    }
+
+    private void DisableGraphics()
+    {
+        m_EntityParameters.ownMesh.enabled = false;
+        m_EntityEffects.trail.enabled = false;
+        m_EntityEffects.trail.Clear();
+    }
+
+    private void EnableCollider()
+    {
+        m_EntityParameters.ownCollider.enabled = true;
+    }
+
+    private void DisableCollider()
+    {
+        m_EntityParameters.ownCollider.enabled = false;
     }
 
     protected override void OnDrawGizmos()
