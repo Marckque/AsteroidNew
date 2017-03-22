@@ -24,23 +24,25 @@ public class FlowFieldsParameters
 
 public enum FlowFieldPreset
 {
-    none,
-    random,
-    gravity,
-    asteroid,
-    alternative,
-    alternativeAsteroid,
-    clockwise,
-    counterClockwise,
-    towardsCenter,
-    awayFromCenter,
-    targetTarget,
-    awayFromTarget,
-    wave,
+    none = 0,
+    random = 1,
+    gravity = 2,
+    asteroid = 3,
+    alternative = 4,
+    alternativeAsteroid = 5,
+    clockwise = 6,
+    counterClockwise = 7,
+    towardsCenter = 8,
+    awayFromCenter = 9,
+    targetTarget = 10,
+    awayFromTarget = 11,
+    wave = 12,
 };
 
 public class FlowFieldManager : MonoBehaviour
 {
+    private const int NUMBER_OF_PRESETS = 12;
+
     #region Variables
     [SerializeField]
     private FlowFieldsParameters m_FlowFieldsParameters = new FlowFieldsParameters();
@@ -87,6 +89,23 @@ public class FlowFieldManager : MonoBehaviour
         if (m_UpdateDirectionInRealTime)
         {
             CheckPreset();
+        }
+
+        if (Input.GetButtonDown("PreviousFlowField"))
+        {
+            if (m_CurrentPreset > 0)
+            {
+                m_CurrentPreset--;
+                CheckPreset();
+            }
+        }
+        else if (Input.GetButtonDown("NextFlowField"))
+        {
+            if ((int)m_CurrentPreset < NUMBER_OF_PRESETS)
+            {
+                m_CurrentPreset++;
+                CheckPreset();
+            }
         }
     }
 

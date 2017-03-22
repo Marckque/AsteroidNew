@@ -53,6 +53,9 @@ public class GameManagement : MonoBehaviour
     {
         InitialiseGameManager();
         InitialiseScoreManager();
+
+        m_GameParameters.managerUI.gameObject.SetActive(true);
+
         StartCoroutine(PeriodicAsteroidSpawn());
     }
 
