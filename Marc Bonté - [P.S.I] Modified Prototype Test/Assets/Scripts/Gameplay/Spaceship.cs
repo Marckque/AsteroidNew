@@ -208,6 +208,8 @@ public class Spaceship : Entity
         m_IsAlive = false;
         m_EntityParameters.ownCollider.enabled = false;
         m_EntityParameters.ownMesh.enabled = false;
+        m_EntityEffects.trail.enabled = false;
+        m_EntityEffects.trail.Clear();
 
         yield return new WaitForSeconds(m_SpaceshipParameters.respawnTime);
 
@@ -215,6 +217,7 @@ public class Spaceship : Entity
 
         m_EntityParameters.ownCollider.enabled = true;
         m_EntityParameters.ownMesh.enabled = true;
+        m_EntityEffects.trail.enabled = true;
         m_IsAlive = true;
 
         StartCoroutine(TemporaryInvincibility());
