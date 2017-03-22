@@ -14,9 +14,14 @@ public class GameParameters
     public Asteroid smallAsteroid;
     public Asteroid mediumAsteroid;
     public Asteroid bigAsteroid;
-    public int maximumAsteroids = 1;
+    public int maximumAsteroidsOnScreen = 1;
     public int numberOfAsteroidsToSpawn = 3;
-    public float delayBetweenSpawn = 2f;
+    public float delayBetweenSpawns = 2f;
+
+    [Range(1f, 3f)]
+    public float minimumSpawnDelay = 1.5f;
+    [Tooltip("0 → the spawn rate will be constant ; X → Will decrease by X the time between each asteroid spawn ; Fastest spawn rate is set to minimumSpawnDelay")]
+    public float decreaseDelayBetweenSpawnsByAmount = 0f;
 
     [Header("UI")]
     public UIManager managerUI;
@@ -87,7 +92,7 @@ public class GameManagement : MonoBehaviour
     {
         while (m_NumberOfSpawnedAsteroids < m_GameParameters.numberOfAsteroidsToSpawn)
         {
-            if (m_Asteroids.Count < m_GameParameters.maximumAsteroids)
+            if (m_Asteroids.Count < m_GameParameters.maximumAsteroidsOnScreen)
             {
                 // Defines a spawn position that is away from the player
                 Vector3 spawnPosition = Vector3.zero;
@@ -102,7 +107,17 @@ public class GameManagement : MonoBehaviour
                 SpawnAsteroid(AsteroidType.big, spawnPosition, ExtensionMethods.RandomVector3());
             }
 
-            yield return new WaitForSeconds(m_GameParameters.delayBetweenSpawn);
+            yield return new WaitForSeconds(m_GameParameters.delayBetweenSpawns);
+
+            // Increases spawn rate after each spawn (if wanted)
+            if (m_GameParameters.delayBetweenSpawns > m_GameParameters.minimumSpawnDelay)
+            {
+                m_GameParameters.delayBetweenSpawns -= m_GameParameters.decreaseDelayBetweenSpawnsByAmount;
+            }
+            else
+            {
+                m_GameParameters.delayBetweenSpawns = m_GameParameters.minimumSpawnDelay;
+            }
         }
     }
 
