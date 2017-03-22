@@ -70,43 +70,27 @@ public class Entity : MonoBehaviour
     private void ConstrainPositionToCamera()
     {
         // Horizontal constrain
-        if (transform.position.x < -Camera.main.orthographicSize)
+        if (transform.position.x < -(Camera.main.orthographicSize + BORDER_MARGIN))
         {
-            if (EntityEffects.trail)
-            {
-                EntityEffects.trail.Clear();
-            }
-
-            transform.position = new Vector3(Camera.main.orthographicSize - BORDER_MARGIN, 0f, transform.position.z);
+            if (EntityEffects.trail) EntityEffects.trail.Clear();
+            transform.position = new Vector3(Camera.main.orthographicSize + BORDER_MARGIN, 0f, transform.position.z);
         }
-        else if (transform.position.x > Camera.main.orthographicSize)
+        else if (transform.position.x > Camera.main.orthographicSize + BORDER_MARGIN)
         {
-            if (EntityEffects.trail)
-            {
-                EntityEffects.trail.Clear();
-            }
-
-            transform.position = new Vector3(-Camera.main.orthographicSize + BORDER_MARGIN, 0f, transform.position.z);
+            if (EntityEffects.trail) EntityEffects.trail.Clear();
+            transform.position = new Vector3(-(Camera.main.orthographicSize + BORDER_MARGIN), 0f, transform.position.z);
         }
 
         // Vertical constrain
-        if (transform.position.z < -Camera.main.orthographicSize)
+        if (transform.position.z < -(Camera.main.orthographicSize + BORDER_MARGIN))
         {
-            if (EntityEffects.trail)
-            {
-                EntityEffects.trail.Clear();
-            }
-
-            transform.position = new Vector3(transform.position.x, 0f, Camera.main.orthographicSize - BORDER_MARGIN);
+            if (EntityEffects.trail) EntityEffects.trail.Clear();
+            transform.position = new Vector3(transform.position.x, 0f, Camera.main.orthographicSize + BORDER_MARGIN);
         }
-        else if (transform.position.z > Camera.main.orthographicSize)
+        else if (transform.position.z > Camera.main.orthographicSize + BORDER_MARGIN)
         {
-            if (EntityEffects.trail)
-            {
-                EntityEffects.trail.Clear();
-            }
-
-            transform.position = new Vector3(transform.position.x, 0f, -Camera.main.orthographicSize + BORDER_MARGIN);
+            if (EntityEffects.trail) EntityEffects.trail.Clear();
+            transform.position = new Vector3(transform.position.x, 0f, -(Camera.main.orthographicSize + BORDER_MARGIN));
         }
     }
 

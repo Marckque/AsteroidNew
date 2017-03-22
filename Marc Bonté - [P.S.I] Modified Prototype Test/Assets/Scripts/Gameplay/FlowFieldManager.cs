@@ -177,34 +177,32 @@ public class FlowFieldManager : MonoBehaviour
                 }
                 break;
 
-
-            /*
-        case FlowFieldPreset.test:
+        case FlowFieldPreset.wave:
             float a = 0;
             Vector2 v = Vector2.zero;
 
             float xOff = 0f;
-            for (int i = 0; i < 10; i++)
+            float yOff = 0f;
+                int dd = 0;
+                float aaa = 0.03f;
+
+            for (int i = 0; i < m_FlowFieldsParameters.flowFields.Length; i++)
             {
-                float yOff = 0f;
-                for (int j = 0; j < 10; j++)
-                {
-                    if (i == 10 && j == 10)
+                    if (dd > 10)
                     {
-                        return;
+                        dd = 0;
+                        xOff += aaa;
                     }
 
-                    a = (xOff + yOff) * Mathf.PI * 2f;
+                    dd++;
+                    a = ExtensionMethods.Remap(Mathf.PerlinNoise(xOff, yOff), 0f, 1f, 0f, Mathf.PI * 2f);
                     v = new Vector2(Mathf.Cos(a), Mathf.Sin(a));
-
                     m_FlowFieldsParameters.flowFields[i].Direction = new Vector3(v.x, 0f, v.y);
-                    yOff += 0.01f;
 
+                    yOff += aaa;
                 }
-                xOff += 0.01f;
-            }
             break;
-            */
+
             /*
             case FlowFieldPreset.wave:
                 test = new Vector3[10, 10];    
